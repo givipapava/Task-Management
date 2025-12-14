@@ -9,7 +9,7 @@ import { TaskFilters } from './TaskFilters';
 import { AdvancedFilters } from './AdvancedFilters';
 import { DashboardSkeleton, TaskListSkeleton, KanbanSkeleton } from './LoadingSkeleton';
 import type { ViewMode } from './AppSidebar';
-import type { Task } from '../types/task';
+import type { Task, PaginationMeta } from '../types/task';
 import type { FilterStatus } from './TaskFilters';
 import type { AdvancedFilterOptions } from './AdvancedFilters';
 import { TaskStatus } from '../types/task';
@@ -31,6 +31,7 @@ interface MainContentProps {
   searchQuery: string;
   filterStatus: FilterStatus;
   advancedFilters: AdvancedFilterOptions;
+  pagination?: PaginationMeta | null;
   onSearchChange: (query: string) => void;
   onFilterChange: (status: FilterStatus) => void;
   onAdvancedFilterChange: (filters: AdvancedFilterOptions) => void;
@@ -38,6 +39,7 @@ interface MainContentProps {
   onDeleteTask: (task: Task) => void;
   onToggleStatus: (task: Task) => void;
   onStatusChange: (taskId: string, newStatus: TaskStatus) => void;
+  onPaginationChange?: (page: number, pageSize: number) => void;
 }
 
 export const MainContent: React.FC<MainContentProps> = React.memo(({
@@ -49,6 +51,7 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
   searchQuery,
   filterStatus,
   advancedFilters,
+  pagination,
   onSearchChange,
   onFilterChange,
   onAdvancedFilterChange,
@@ -56,6 +59,7 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
   onDeleteTask,
   onToggleStatus,
   onStatusChange,
+  onPaginationChange,
 }) => {
   const getViewTitle = () => {
     switch (viewMode) {
@@ -118,9 +122,11 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
               <TaskList
                 tasks={filteredTasks}
                 loading={loading}
+                pagination={pagination}
                 onEdit={onEditTask}
                 onDelete={onDeleteTask}
                 onToggleStatus={onToggleStatus}
+                onPaginationChange={onPaginationChange}
               />
             </>
           )}

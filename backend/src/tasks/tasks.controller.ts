@@ -8,11 +8,14 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { PaginatedTasksResponseDto } from './dto/paginated-response.dto';
 import { Task } from './task.entity';
 
 /**
@@ -25,15 +28,23 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   /**
-   * Retrieve all tasks
-   * @returns Array of all tasks
+   * Retrieve all tasks with optional pagination
+   * @param paginationQuery Optional pagination parameters (page, pageSize)
+   * @returns Array of all tasks or paginated response
    */
   @Get()
-  @ApiOperation({ summary: 'Get all tasks', description: 'Retrieve a list of all tasks' })
-  @ApiResponse({ status: 200, description: 'Tasks retrieved successfully', type: [Task] })
+  @ApiOperation({
+    summary: 'Get all tasks',
+    description: 'Retrieve a list of all tasks with optional pagination. If pagination params are provided, returns paginated response with metadata.'
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (starts from 1)', example: 1 })
+  @ApiQuery({ name: 'pageSize', required: false, type: Number, description: 'Number of items per page (max 100)', example: 10 })
+  @ApiResponse({ status: 200, description: 'Tasks retrieved successfully (paginated)', type: PaginatedTasksResponseDto })
+  @ApiResponse({ status: 200, description: 'Tasks retrieved successfully (all tasks)', type: [Task] })
+  @ApiResponse({ status: 400, description: 'Invalid pagination parameters' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  findAll() {
-    return this.tasksService.findAll();
+  findAll(@Query() paginationQuery: PaginationQueryDto) {
+    return this.tasksService.findAll(paginationQuery);
   }
 
   /**

@@ -6,31 +6,41 @@ import {
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { SkipThrottle } from '@nestjs/throttler';
+import { FileSystemHealthIndicator } from './indicators/file-system.health';
 
 /**
  * Health check controller for monitoring application status
  * Provides endpoints for liveness and readiness probes
+ * Rate limiting is disabled for health check endpoints
  */
 @ApiTags('health')
 @Controller('health')
+@SkipThrottle() // Exclude all health endpoints from rate limiting
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
     private readonly disk: DiskHealthIndicator,
     private readonly memory: MemoryHealthIndicator,
+    private readonly fileSystem: FileSystemHealthIndicator,
   ) {}
 
   /**
-   * Health check endpoint for monitoring
-   * Checks disk space and memory usage
+   * Comprehensive health check endpoint for monitoring
+   * Checks disk space, memory usage, and data file accessibility
    */
   @Get()
   @HealthCheck()
-  @ApiOperation({ summary: 'Health check', description: 'Check application health status' })
+  @ApiOperation({
+    summary: 'Comprehensive health check',
+    description: 'Check application health status including disk, memory, and data file',
+  })
   @ApiResponse({ status: 200, description: 'Application is healthy' })
   @ApiResponse({ status: 503, description: 'Application is unhealthy' })
   check() {
     return this.health.check([
+      // Check if data file is accessible and valid
+      () => this.fileSystem.isHealthy('tasks_file'),
       // Check if disk storage has at least 50% free space
       () =>
         this.disk.checkStorage('storage', {

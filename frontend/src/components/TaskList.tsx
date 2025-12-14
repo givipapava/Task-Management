@@ -1,10 +1,10 @@
 import React from 'react';
 import { Table, Tag, Button, Space, Checkbox, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { TaskPriority, TaskStatus, TaskCategory } from '../types/task';
-import type { Task } from '../types/task';
+import type { Task, PaginationMeta } from '../types/task';
 import { getPriorityColor, getCategoryColor } from '../utils/taskHelpers';
 
 const { Text } = Typography;
@@ -12,17 +12,21 @@ const { Text } = Typography;
 interface TaskListProps {
   tasks: Task[];
   loading?: boolean;
+  pagination?: PaginationMeta | null;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onToggleStatus: (task: Task) => void;
+  onPaginationChange?: (page: number, pageSize: number) => void;
 }
 
 const TaskListComponent: React.FC<TaskListProps> = ({
   tasks,
   loading,
+  pagination,
   onEdit,
   onDelete,
   onToggleStatus,
+  onPaginationChange,
 }) => {
   const getStatusColor = (status: TaskStatus): string => {
     switch (status) {
@@ -176,17 +180,33 @@ const TaskListComponent: React.FC<TaskListProps> = ({
     },
   ];
 
+  // Configure pagination
+  const paginationConfig: TablePaginationConfig | false = pagination
+    ? {
+        current: pagination.page,
+        pageSize: pagination.pageSize,
+        total: pagination.total,
+        showSizeChanger: true,
+        showTotal: (total) => `Total ${total} tasks`,
+        pageSizeOptions: ['5', '10', '20', '50', '100'],
+        onChange: (page, pageSize) => {
+          onPaginationChange?.(page, pageSize);
+        },
+      }
+    : {
+        pageSize: 10,
+        showSizeChanger: true,
+        showTotal: (total) => `Total ${total} tasks`,
+        pageSizeOptions: ['5', '10', '20', '50'],
+      };
+
   return (
     <Table
       columns={columns}
       dataSource={tasks}
       rowKey="id"
       loading={loading}
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        showTotal: (total) => `Total ${total} tasks`,
-      }}
+      pagination={paginationConfig}
       locale={{
         emptyText: 'No tasks found',
       }}

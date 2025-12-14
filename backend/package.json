@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "nest build && mkdir -p dist/src/data && cp -r src/data/* dist/src/data/",
-    "build:prod": "nest build && mkdir -p dist/src/data && cp -r src/data/* dist/src/data/ && cp .env dist/",
+    "build": "nest build",
+    "build:prod": "nest build && cp .env dist/",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",

@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 import { env } from '../config/env';
-import type { Task, CreateTaskDto, UpdateTaskDto } from '../types/task';
+import type { Task, CreateTaskDto, UpdateTaskDto, PaginationQuery, PaginatedResponse } from '../types/task';
 
 export class ApiError extends Error {
   constructor(
@@ -93,8 +93,26 @@ class ApiClient {
 const apiClient = new ApiClient();
 
 export const taskApi = {
+  /**
+   * Get all tasks without pagination
+   */
   async getAllTasks(signal?: AbortSignal): Promise<Task[]> {
     return apiClient.get<Task[]>('/tasks', signal);
+  },
+
+  /**
+   * Get tasks with pagination
+   */
+  async getTasksPaginated(
+    pagination: PaginationQuery,
+    signal?: AbortSignal
+  ): Promise<PaginatedResponse<Task>> {
+    const params = new URLSearchParams();
+    if (pagination.page) params.append('page', pagination.page.toString());
+    if (pagination.pageSize) params.append('pageSize', pagination.pageSize.toString());
+
+    const url = `/tasks?${params.toString()}`;
+    return apiClient.get<PaginatedResponse<Task>>(url, signal);
   },
 
   async getTaskById(id: string, signal?: AbortSignal): Promise<Task> {

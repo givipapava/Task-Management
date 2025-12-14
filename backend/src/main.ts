@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import * as compression from 'compression';
+import * as express from 'express';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
@@ -16,6 +17,10 @@ async function bootstrap() {
   const port = configService.get<number>('PORT', 3001);
   const corsOrigin = configService.get<string>('CORS_ORIGIN', 'http://localhost:5173');
   const nodeEnv = configService.get<string>('NODE_ENV', 'development');
+
+  // Security: Limit request body size to prevent DoS attacks
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // Security: Enable Helmet for security headers
   app.use(
@@ -69,6 +74,7 @@ async function bootstrap() {
   logger.log(`🛡️  Security headers enabled (Helmet)`);
   logger.log(`⚡ Response compression enabled`);
   logger.log(`🚦 Rate limiting: 100 requests/minute per IP`);
+  logger.log(`📦 Request size limit: 10MB`);
 }
 
 bootstrap();
