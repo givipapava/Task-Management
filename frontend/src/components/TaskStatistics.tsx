@@ -283,7 +283,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -312,7 +312,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
@@ -342,7 +342,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
@@ -371,7 +371,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
@@ -480,7 +480,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
                 <span>Status Distribution</span>
               </Space>
             }
-            bordered={false}
+            variant="borderless"
             hoverable={false}
             style={{ height: '100%' }}
           >
@@ -495,7 +495,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
                 <span>Priority Breakdown</span>
               </Space>
             }
-            bordered={false}
+            variant="borderless"
             hoverable={false}
             style={{ height: '100%' }}
           >
@@ -519,7 +519,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
                 <span>Top Categories</span>
               </Space>
             }
-            bordered={false}
+            variant="borderless"
             hoverable={false}
             style={{ height: '100%' }}
           >
@@ -538,7 +538,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
                 <span>7-Day Activity Trend</span>
               </Space>
             }
-            bordered={false}
+            variant="borderless"
             hoverable={false}
             style={{ height: '100%' }}
           >
@@ -550,7 +550,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} sm={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
@@ -589,7 +589,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
         <Col xs={24} sm={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
@@ -628,7 +628,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
         <Col xs={24} sm={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="gradient-card"
             style={{
               background: 'linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)',

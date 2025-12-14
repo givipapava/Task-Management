@@ -1,15 +1,33 @@
 import React, { useMemo, useCallback, useState, useEffect } from 'react';
-import { Card, Tag, Typography, Space, Button, Dropdown, Empty, App } from 'antd';
+import { Card, Tag, Typography, Space, Button, Dropdown, Empty, App, Row, Col, Statistic, Tooltip, Badge } from 'antd';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { DndContext, DragOverlay, rectIntersection, KeyboardSensor, PointerSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { EditOutlined, DeleteOutlined, MoreOutlined, CalendarOutlined, FlagOutlined } from '@ant-design/icons';
-import { TaskStatus, TaskPriority } from '../types/task';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  MoreOutlined,
+  CalendarOutlined,
+  FlagOutlined,
+  WarningOutlined,
+  InfoCircleOutlined,
+  FilterOutlined,
+  TrophyOutlined,
+  RiseOutlined,
+  ClockCircleOutlined,
+  FireOutlined,
+  FolderOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
+import { TaskStatus, TaskPriority, TaskCategory } from '../types/task';
 import type { Task } from '../types/task';
 import { getPriorityColor, getCategoryColor } from '../utils/taskHelpers';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const { Text, Paragraph } = Typography;
 
@@ -29,6 +47,296 @@ interface TaskCardProps {
   isJustDropped?: boolean;
 }
 
+interface BoardSummaryProps {
+  tasks: Task[];
+  darkMode: boolean;
+}
+
+interface QuickFiltersProps {
+  darkMode: boolean;
+  activeFilters: {
+    priority?: TaskPriority;
+    category?: TaskCategory;
+  };
+  onFilterChange: (filters: { priority?: TaskPriority; category?: TaskCategory }) => void;
+  filteredCount: number;
+  totalCount: number;
+}
+
+// Board Summary Component
+const BoardSummary: React.FC<BoardSummaryProps> = ({ tasks, darkMode }) => {
+  const stats = useMemo(() => {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.status === TaskStatus.COMPLETED).length;
+    const overdue = tasks.filter(t =>
+      t.dueDate &&
+      t.status !== TaskStatus.COMPLETED &&
+      dayjs(t.dueDate).isBefore(dayjs(), 'day')
+    ).length;
+    const active = tasks.filter(t =>
+      t.status === TaskStatus.PENDING || t.status === TaskStatus.IN_PROGRESS
+    ).length;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return { total, completed, overdue, active, completionRate };
+  }, [tasks]);
+
+  return (
+    <Card
+      style={{
+        marginBottom: 24,
+        borderRadius: '16px',
+        border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e8e8e8',
+        boxShadow: darkMode
+          ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+          : '0 4px 16px rgba(0, 0, 0, 0.08)',
+        background: darkMode
+          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%)'
+          : 'linear-gradient(135deg, #ffffff 0%, #fafafa 100%)',
+      }}
+    >
+      <Row gutter={[16, 16]}>
+        <Col xs={12} sm={6}>
+          <div style={{
+            padding: '20px',
+            borderRadius: '12px',
+            background: darkMode ? 'rgba(24, 144, 255, 0.08)' : '#fafafa',
+            border: darkMode ? '1px solid rgba(24, 144, 255, 0.2)' : '1px solid #e8e8e8',
+            minHeight: '120px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}>
+            <Statistic
+              title={
+                <Space style={{ color: darkMode ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.45)', fontSize: 13 }}>
+                  <InfoCircleOutlined style={{ color: darkMode ? '#69c0ff' : '#1890ff' }} />
+                  <span>Total Tasks</span>
+                </Space>
+              }
+              value={stats.total}
+              valueStyle={{ color: darkMode ? '#69c0ff' : '#1890ff', fontSize: 32, fontWeight: 600 }}
+            />
+          </div>
+        </Col>
+        <Col xs={12} sm={6}>
+          <div style={{
+            padding: '20px',
+            borderRadius: '12px',
+            background: darkMode ? 'rgba(250, 140, 22, 0.08)' : '#fafafa',
+            border: darkMode ? '1px solid rgba(250, 140, 22, 0.2)' : '1px solid #e8e8e8',
+            minHeight: '120px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}>
+            <Statistic
+              title={
+                <Space style={{ color: darkMode ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.45)', fontSize: 13 }}>
+                  <RiseOutlined style={{ color: darkMode ? '#ffa940' : '#fa8c16' }} />
+                  <span>Active Tasks</span>
+                </Space>
+              }
+              value={stats.active}
+              valueStyle={{ color: darkMode ? '#ffa940' : '#fa8c16', fontSize: 32, fontWeight: 600 }}
+            />
+          </div>
+        </Col>
+        <Col xs={12} sm={6}>
+          <div style={{
+            padding: '20px',
+            borderRadius: '12px',
+            background: darkMode ? 'rgba(255, 77, 79, 0.08)' : '#fafafa',
+            border: darkMode ? '1px solid rgba(255, 77, 79, 0.2)' : '1px solid #e8e8e8',
+            minHeight: '120px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}>
+            <Statistic
+              title={
+                <Space style={{ color: darkMode ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.45)', fontSize: 13 }}>
+                  <WarningOutlined style={{ color: '#ff4d4f' }} />
+                  <span>Overdue</span>
+                </Space>
+              }
+              value={stats.overdue}
+              valueStyle={{ color: '#ff4d4f', fontSize: 32, fontWeight: 600 }}
+              suffix={stats.overdue > 0 ? <Badge status="error" /> : null}
+            />
+          </div>
+        </Col>
+        <Col xs={12} sm={6}>
+          <div style={{
+            padding: '20px',
+            borderRadius: '12px',
+            background: darkMode ? 'rgba(82, 196, 26, 0.08)' : '#fafafa',
+            border: darkMode ? '1px solid rgba(82, 196, 26, 0.2)' : '1px solid #e8e8e8',
+            minHeight: '120px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}>
+            <Statistic
+              title={
+                <Space style={{ color: darkMode ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.45)', fontSize: 13 }}>
+                  <TrophyOutlined style={{ color: darkMode ? '#95de64' : '#52c41a' }} />
+                  <span>Completion Rate</span>
+                </Space>
+              }
+              value={stats.completionRate}
+              suffix="%"
+              valueStyle={{ color: darkMode ? '#95de64' : '#52c41a', fontSize: 32, fontWeight: 600 }}
+            />
+          </div>
+        </Col>
+      </Row>
+    </Card>
+  );
+};
+
+// Quick Filters Component
+const QuickFilters: React.FC<QuickFiltersProps> = ({
+  darkMode,
+  activeFilters,
+  onFilterChange,
+  filteredCount,
+  totalCount,
+}) => {
+  const priorityFilters = [TaskPriority.HIGH, TaskPriority.MEDIUM, TaskPriority.LOW];
+  const categoryFilters = [
+    TaskCategory.WORK,
+    TaskCategory.PERSONAL,
+    TaskCategory.SHOPPING,
+    TaskCategory.HEALTH,
+    TaskCategory.OTHER,
+  ];
+
+  const hasActiveFilters = activeFilters.priority || activeFilters.category;
+
+  return (
+    <Card
+      style={{
+        marginBottom: 16,
+        borderRadius: '12px',
+        border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e8e8e8',
+        background: darkMode ? 'rgba(255, 255, 255, 0.02)' : '#ffffff',
+        boxShadow: darkMode ? '0 2px 8px rgba(0,0,0,0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
+      }}
+      styles={{ body: { padding: '16px 20px' } }}
+    >
+      <Space wrap size={12} style={{ width: '100%', justifyContent: 'space-between' }}>
+        <Space wrap size={12}>
+          <Space align="center" size={8}>
+            <FilterOutlined style={{ color: darkMode ? '#69c0ff' : '#1890ff', fontSize: 16 }} />
+            <Text strong style={{ fontSize: 14, color: darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.85)' }}>
+              Filters:
+            </Text>
+          </Space>
+
+          <Space wrap size={8}>
+            {priorityFilters.map(priority => (
+              <Tag
+                key={priority}
+                color={activeFilters.priority === priority ? getPriorityColor(priority) : undefined}
+                style={{
+                  cursor: 'pointer',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  padding: '4px 12px',
+                  background: activeFilters.priority === priority
+                    ? undefined
+                    : darkMode ? 'rgba(255,255,255,0.08)' : '#fafafa',
+                  border: activeFilters.priority === priority
+                    ? `2px solid ${getPriorityColor(priority)}`
+                    : darkMode ? '1px solid rgba(255,255,255,0.15)' : '1px solid #e8e8e8',
+                  fontWeight: activeFilters.priority === priority ? 600 : 500,
+                  color: activeFilters.priority === priority
+                    ? '#fff'
+                    : darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.65)',
+                  transition: 'all 0.2s ease',
+                }}
+                onClick={() => onFilterChange({
+                  ...activeFilters,
+                  priority: activeFilters.priority === priority ? undefined : priority,
+                })}
+              >
+                <FireOutlined /> {priority.toUpperCase()}
+              </Tag>
+            ))}
+          </Space>
+
+          <Space wrap size={8}>
+            {categoryFilters.map(category => (
+              <Tag
+                key={category}
+                color={activeFilters.category === category ? getCategoryColor(category) : undefined}
+                style={{
+                  cursor: 'pointer',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  padding: '4px 12px',
+                  textTransform: 'capitalize',
+                  background: activeFilters.category === category
+                    ? undefined
+                    : darkMode ? 'rgba(255,255,255,0.08)' : '#fafafa',
+                  border: activeFilters.category === category
+                    ? `2px solid ${getCategoryColor(category)}`
+                    : darkMode ? '1px solid rgba(255,255,255,0.15)' : '1px solid #e8e8e8',
+                  fontWeight: activeFilters.category === category ? 600 : 500,
+                  color: activeFilters.category === category
+                    ? '#fff'
+                    : darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.65)',
+                  transition: 'all 0.2s ease',
+                }}
+                onClick={() => onFilterChange({
+                  ...activeFilters,
+                  category: activeFilters.category === category ? undefined : category,
+                })}
+              >
+                <FolderOutlined /> {category}
+              </Tag>
+            ))}
+          </Space>
+        </Space>
+
+        <Space size={12}>
+          {hasActiveFilters && (
+            <Button
+              type="text"
+              size="small"
+              icon={<CloseCircleOutlined />}
+              onClick={() => onFilterChange({})}
+              style={{
+                fontSize: 12,
+                color: darkMode ? '#ff7875' : '#ff4d4f',
+                fontWeight: 500,
+              }}
+            >
+              Clear
+            </Button>
+          )}
+          <div style={{
+            padding: '4px 12px',
+            borderRadius: '8px',
+            background: darkMode ? 'rgba(24, 144, 255, 0.1)' : 'linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%)',
+            border: darkMode ? '1px solid rgba(24, 144, 255, 0.2)' : '1px solid #91d5ff',
+          }}>
+            <Text strong style={{
+              fontSize: 12,
+              color: darkMode ? '#69c0ff' : '#1890ff',
+            }}>
+              {filteredCount === totalCount
+                ? `${totalCount} tasks`
+                : `${filteredCount} of ${totalCount} tasks`}
+            </Text>
+          </div>
+        </Space>
+      </Space>
+    </Card>
+  );
+};
+
 const TaskCard: React.FC<TaskCardProps> = ({ task, darkMode, onEdit, onDelete, isJustDropped }) => {
   const {
     attributes,
@@ -46,7 +354,42 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, darkMode, onEdit, onDelete, i
     zIndex: isDragging ? 1000 : 'auto',
   };
 
-  const isOverdue = task.dueDate && task.status === TaskStatus.PENDING && dayjs(task.dueDate).isBefore(dayjs(), 'day');
+  const isOverdue = task.dueDate && task.status !== TaskStatus.COMPLETED && dayjs(task.dueDate).isBefore(dayjs(), 'day');
+
+  // Calculate days in current status (aging indicator)
+  const daysInStatus = dayjs().diff(dayjs(task.updatedAt), 'day');
+  const isAging = daysInStatus >= 7 && task.status !== TaskStatus.COMPLETED;
+
+  // Calculate due date info
+  const dueDateInfo = useMemo(() => {
+    if (!task.dueDate) return null;
+
+    const dueDate = dayjs(task.dueDate);
+    const today = dayjs();
+    const daysUntilDue = dueDate.diff(today, 'day');
+
+    let text = '';
+    let color = '';
+
+    if (daysUntilDue < 0) {
+      text = `${Math.abs(daysUntilDue)} days overdue`;
+      color = '#ff4d4f';
+    } else if (daysUntilDue === 0) {
+      text = 'Due today';
+      color = '#faad14';
+    } else if (daysUntilDue === 1) {
+      text = 'Due tomorrow';
+      color = '#faad14';
+    } else if (daysUntilDue <= 3) {
+      text = `Due in ${daysUntilDue} days`;
+      color = '#faad14';
+    } else {
+      text = `Due in ${daysUntilDue} days`;
+      color = darkMode ? 'rgba(255, 255, 255, 0.65)' : '#666';
+    }
+
+    return { text, color, date: dueDate.format('MMM DD, YYYY') };
+  }, [task.dueDate, darkMode]);
 
   const menuItems = [
     {
@@ -86,7 +429,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, darkMode, onEdit, onDelete, i
           borderLeftWidth: 4,
           boxShadow: isDragging
             ? darkMode ? '0 8px 24px rgba(0, 0, 0, 0.5)' : '0 8px 24px rgba(0, 0, 0, 0.15)'
-            : darkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
+            : isAging
+              ? darkMode ? '0 0 12px rgba(250, 140, 22, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)' : '0 0 12px rgba(250, 140, 22, 0.3), 0 2px 8px rgba(0, 0, 0, 0.08)'
+              : darkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
           transform: isDragging ? 'rotate(3deg) scale(1.03)' : undefined,
         }}
         styles={{ body: { padding: '12px' } }}
@@ -143,30 +488,56 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, darkMode, onEdit, onDelete, i
             )}
           </Space>
 
-          {task.dueDate && (
-            <div style={{
-              background: isOverdue
-                ? darkMode ? 'rgba(255, 77, 79, 0.15)' : 'rgba(255, 77, 79, 0.1)'
-                : darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-              borderRadius: 8,
-              padding: '6px 10px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-            }}>
-              <CalendarOutlined style={{
-                fontSize: 12,
-                color: isOverdue ? '#ff4d4f' : darkMode ? 'rgba(255, 255, 255, 0.65)' : '#666'
-              }} />
-              <Text
-                type={isOverdue ? 'danger' : 'secondary'}
-                style={{ fontSize: 11, fontWeight: 500 }}
-              >
-                {dayjs(task.dueDate).format('MMM DD, YYYY')}
-                {isOverdue && ' • Overdue'}
-              </Text>
-            </div>
-          )}
+          <Space direction="vertical" size={6} style={{ width: '100%' }}>
+            {dueDateInfo && (
+              <Tooltip title={dueDateInfo.date}>
+                <div style={{
+                  background: isOverdue
+                    ? darkMode ? 'rgba(255, 77, 79, 0.15)' : 'rgba(255, 77, 79, 0.1)'
+                    : darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}>
+                  <CalendarOutlined style={{
+                    fontSize: 12,
+                    color: dueDateInfo.color,
+                  }} />
+                  <Text
+                    style={{ fontSize: 11, fontWeight: 500, color: dueDateInfo.color }}
+                  >
+                    {dueDateInfo.text}
+                  </Text>
+                </div>
+              </Tooltip>
+            )}
+
+            <Space size={8} style={{ flexWrap: 'wrap' }}>
+              <Tooltip title={`Created on ${dayjs(task.createdAt).format('MMM DD, YYYY h:mm A')}`}>
+                <Text type="secondary" style={{ fontSize: 10 }}>
+                  <ClockCircleOutlined /> Created {dayjs(task.createdAt).fromNow()}
+                </Text>
+              </Tooltip>
+
+              {isAging && (
+                <Tooltip title={`Task has been in "${task.status.replace('_', ' ')}" status for ${daysInStatus} days`}>
+                  <Tag
+                    color="warning"
+                    style={{
+                      fontSize: 10,
+                      padding: '0 6px',
+                      borderRadius: 6,
+                      border: 'none',
+                    }}
+                  >
+                    <WarningOutlined /> {daysInStatus}d in status
+                  </Tag>
+                </Tooltip>
+              )}
+            </Space>
+          </Space>
         </Space>
       </Card>
     </div>
@@ -184,6 +555,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [justDroppedId, setJustDroppedId] = useState<string | null>(null);
   const [lastDroppedColumn, setLastDroppedColumn] = useState<string | null>(null);
+  const [filters, setFilters] = useState<{ priority?: TaskPriority; category?: TaskCategory }>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -198,13 +570,22 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
     })
   );
 
-  const { pendingTasks, inProgressTasks, completedTasks, taskMap } = useMemo(() => {
+  // Apply filters
+  const filteredTasks = useMemo(() => {
+    return tasks.filter(task => {
+      if (filters.priority && task.priority !== filters.priority) return false;
+      if (filters.category && task.category !== filters.category) return false;
+      return true;
+    });
+  }, [tasks, filters]);
+
+  const { pendingTasks, inProgressTasks, completedTasks, taskMap, columnStats } = useMemo(() => {
     const pending: Task[] = [];
     const inProgress: Task[] = [];
     const completed: Task[] = [];
     const map = new Map<string, Task>();
 
-    tasks.forEach((task) => {
+    filteredTasks.forEach((task) => {
       map.set(task.id, task);
       if (task.status === TaskStatus.PENDING) {
         pending.push(task);
@@ -215,13 +596,29 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
       }
     });
 
+    // Calculate column statistics
+    const getColumnStats = (taskList: Task[]) => {
+      const overdue = taskList.filter(t =>
+        t.dueDate && dayjs(t.dueDate).isBefore(dayjs(), 'day')
+      ).length;
+      const high = taskList.filter(t => t.priority === TaskPriority.HIGH).length;
+      const medium = taskList.filter(t => t.priority === TaskPriority.MEDIUM).length;
+      const low = taskList.filter(t => t.priority === TaskPriority.LOW).length;
+      return { overdue, high, medium, low };
+    };
+
     return {
       pendingTasks: pending,
       inProgressTasks: inProgress,
       completedTasks: completed,
       taskMap: map,
+      columnStats: {
+        pending: getColumnStats(pending),
+        inProgress: getColumnStats(inProgress),
+        completed: getColumnStats(completed),
+      },
     };
-  }, [tasks]);
+  }, [filteredTasks]);
 
   const columnToStatus: Record<string, TaskStatus> = useMemo(
     () => ({
@@ -309,7 +706,8 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
     gradient: string;
     columnId: string;
     taskList: Task[];
-  }> = ({ title, icon, count, color, gradient, columnId, taskList }) => {
+    stats?: { overdue: number; high: number; medium: number; low: number };
+  }> = ({ title, icon, count, color, gradient, columnId, taskList, stats = { overdue: 0, high: 0, medium: 0, low: 0 } }) => {
     const { setNodeRef, isOver } = useDroppable({
       id: columnId,
     });
@@ -336,43 +734,75 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
         <Card
           className="kanban-column"
           title={
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 0',
-            }}>
-              <Space size={12}>
-                <div style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  background: gradient,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 18,
-                  color: '#fff',
-                  boxShadow: `0 4px 12px ${color}40`,
-                }}>
-                  {icon}
-                </div>
-                <Text strong style={{ fontSize: 17 }}>{title}</Text>
-              </Space>
-              <Tag
-                color={color}
-                className={shouldAnimate ? 'count-badge-pulse' : ''}
-                style={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  padding: '4px 12px',
-                  borderRadius: 12,
-                  minWidth: 36,
-                  textAlign: 'center',
-                }}
-              >
-                {count}
-              </Tag>
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px 0',
+              }}>
+                <Space size={12}>
+                  <div style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    background: gradient,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 18,
+                    color: '#fff',
+                    boxShadow: `0 4px 12px ${color}40`,
+                  }}>
+                    {icon}
+                  </div>
+                  <div>
+                    <Text strong style={{ fontSize: 17, display: 'block' }}>{title}</Text>
+                    {stats.overdue > 0 && (
+                      <Text type="danger" style={{ fontSize: 11 }}>
+                        <WarningOutlined /> {stats.overdue} overdue
+                      </Text>
+                    )}
+                  </div>
+                </Space>
+                <Space size={8}>
+                  {stats.overdue > 0 && (
+                    <Badge count={stats.overdue} style={{ backgroundColor: '#ff4d4f' }} />
+                  )}
+                  <Tooltip
+                    title={
+                      <Space direction="vertical" size={4}>
+                        <Text style={{ color: '#fff', fontSize: 12 }}>Priority Breakdown:</Text>
+                        <Text style={{ color: '#fff', fontSize: 11 }}>
+                          <FireOutlined style={{ color: '#ff4d4f' }} /> High: {stats.high}
+                        </Text>
+                        <Text style={{ color: '#fff', fontSize: 11 }}>
+                          <FireOutlined style={{ color: '#faad14' }} /> Medium: {stats.medium}
+                        </Text>
+                        <Text style={{ color: '#fff', fontSize: 11 }}>
+                          <FireOutlined style={{ color: '#52c41a' }} /> Low: {stats.low}
+                        </Text>
+                      </Space>
+                    }
+                  >
+                    <Tag
+                      color={color}
+                      className={shouldAnimate ? 'count-badge-pulse' : ''}
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        padding: '4px 12px',
+                        borderRadius: 12,
+                        minWidth: 36,
+                        textAlign: 'center',
+                        cursor: 'help',
+                      }}
+                    >
+                      {count}
+                    </Tag>
+                  </Tooltip>
+                </Space>
+              </div>
             </div>
           }
           style={{
@@ -438,6 +868,16 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
 
   return (
     <div>
+      <BoardSummary tasks={tasks} darkMode={darkMode} />
+
+      <QuickFilters
+        darkMode={darkMode}
+        activeFilters={filters}
+        onFilterChange={setFilters}
+        filteredCount={filteredTasks.length}
+        totalCount={tasks.length}
+      />
+
       <DndContext
         sensors={sensors}
         collisionDetection={rectIntersection}
@@ -460,6 +900,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
           gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
           columnId="pending-column"
           taskList={pendingTasks}
+          stats={columnStats.pending}
         />
         <ColumnCard
           title="In Progress"
@@ -469,6 +910,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
           gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
           columnId="in-progress-column"
           taskList={inProgressTasks}
+          stats={columnStats.inProgress}
         />
         <ColumnCard
           title="Completed"
@@ -478,6 +920,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
           gradient="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
           columnId="completed-column"
           taskList={completedTasks}
+          stats={columnStats.completed}
         />
       </div>
 

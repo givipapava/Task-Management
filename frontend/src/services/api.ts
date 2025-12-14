@@ -4,13 +4,18 @@ import { env } from '../config/env';
 import type { Task, CreateTaskDto, UpdateTaskDto, PaginationQuery, PaginatedResponse } from '../types/task';
 
 export class ApiError extends Error {
+  status: number;
+  code?: string;
+
   constructor(
-    public status: number,
+    status: number,
     message: string,
-    public code?: string
+    code?: string
   ) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
   }
 }
 

@@ -8,7 +8,7 @@ import {
   RocketOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { TaskPriority, TaskCategory, TaskStatus } from '../types/task';
+import { TaskPriority } from '../types/task';
 import type { Task, CreateTaskDto } from '../types/task';
 
 const { TextArea } = Input;

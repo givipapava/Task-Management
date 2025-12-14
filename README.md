@@ -1,223 +1,264 @@
-# Task Management Dashboard
+# 📋 Task Management Dashboard
 
-A modern, full-stack task management application built with React, TypeScript, NestJS, and Ant Design. This application allows users to create, edit, delete, and organize tasks with an intuitive and accessible enterprise-grade interface.
+A modern, full-stack task management application with beautiful UI, drag-and-drop Kanban board, analytics, and advanced filtering capabilities. Built with React, TypeScript, NestJS, and Ant Design.
+
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![Ant Design](https://img.shields.io/badge/Ant%20Design-0170FE?style=flat&logo=ant-design&logoColor=white)](https://ant.design/)
+
+---
 
 ## 🚀 Quick Start
 
-```bash
-# Install all dependencies
-npm run install:all
+### One-Command Setup & Run
 
-# Start both backend and frontend concurrently
-npm run dev
+```bash
+# Install all dependencies and start both servers
+npm run install:all && npm run dev
 ```
 
-Then open [http://localhost:5173](http://localhost:5173) in your browser!
+Then open **[http://localhost:5173](http://localhost:5173)** in your browser!
 
-- Backend API: `http://localhost:3001`
-- Frontend App: `http://localhost:5173`
+- 🖥️ **Frontend**: `http://localhost:5173`
+- 🔌 **Backend API**: `http://localhost:3001`
 
-## Features
+---
 
-### Core Requirements ✅
-- **Task List View**: Display tasks in a clean, organized table layout with Ant Design
-- **Task Creation**: Form with validation using Ant Design Form components
-- **Task Management**: Edit, delete, and mark tasks as complete
-- **Filtering**: Filter by status (All, Pending, Completed) with visual indicators
-- **API Integration**: Full RESTful API with NestJS backend
-- **Error Handling**: Meaningful feedback using Ant Design message/notification
-- **Loading Indicators**: Loading states during all API calls
-- **Data Persistence**: Static JSON file storage
+## ✨ Features
 
-### Task Properties
-- ✅ Title (required)
-- ✅ Description (optional)
-- ✅ Priority (High, Medium, Low) with color-coded tags
-- ✅ Due date (optional) with date picker
-- ✅ Status (Pending or Completed)
-- ✅ Created timestamp (automatic)
-- ✅ Updated timestamp (automatic)
+### 🎯 Core Functionality
+- ✅ **Create, Edit, Delete** tasks with full CRUD operations
+- ✅ **Task Properties**: Title, description, priority, category, due date, status
+- ✅ **Smart Filtering**: Search by keywords, filter by status/priority/category
+- ✅ **Real-time Updates**: Instant feedback with loading states and notifications
+- ✅ **Data Persistence**: All tasks saved to JSON file storage
 
-### Bonus Features Implemented
-- ✅ **Real-time Search**: Instant search filtering across title and description
-- ✅ **Professional UI**: Enterprise-grade interface with Ant Design components
-- ✅ **Advanced Filtering**: Combined search and status filtering
-- ✅ **Responsive Table**: Pagination and sorting capabilities
+### 🎨 Views & Interfaces
+- 📊 **Dashboard** - Overview with statistics, recent activity, and quick stats
+- 📝 **Task List** - Table view with pagination, search, and advanced filters
+- 🎯 **Kanban Board** - Drag-and-drop interface with column statistics
+- 📈 **Analytics** - Charts and insights for task metrics
 
-### Additional Features
-- Priority-based color coding (Red/Orange/Blue tags)
-- Overdue task indicators with red highlighting
-- Checkbox-based task completion toggle
-- Popconfirm dialogs for destructive actions
-- Empty state handling
-- Task count badges in filters
-- Professional layout with header and content areas
-- Success/error notifications
+### 🌙 Advanced Features
+- 🎨 **Dark Mode** - Full dark theme support across all views
+- 🎯 **Priority Management** - High/Medium/Low with color coding
+- 📂 **Categories** - Work, Personal, Shopping, Health, Other
+- 📅 **Due Dates** - Track deadlines with overdue indicators
+- ⏱️ **Aging Indicators** - Visual warnings for stale tasks
+- 📥 **Import/Export** - JSON export and import functionality
+- 🔄 **Server-side Pagination** - Efficient data handling
+- ⌨️ **Keyboard Accessible** - Full keyboard navigation support
 
-## Technology Stack
+---
+
+## 📸 Screenshots
+
+### Dashboard View
+
+<div align="center">
+
+
+#### Dark Mode
+![Dashboard Dark Mode](./images/dashboard-dark.png)
+*Beautiful dark theme with gradient effects and modern styling*
+
+</div>
+
+---
+
+### Task List View
+
+<div align="center">
+
+#### Light Mode
+![Task List Light Mode](./images/task-list-light.png)
+*Comprehensive table view with search, filters, and pagination*
+
+#### Dark Mode
+![Task List Dark Mode](./images/task-list-dark.png)
+*Task list in dark mode with advanced filtering capabilities*
+
+</div>
+
+---
+
+### Kanban Board View
+
+<div align="center">
+
+#### Light Mode
+![Kanban Board Light Mode](./images/kanban-board-light-new.png)
+*Drag-and-drop Kanban board with statistics, quick filters, and enhanced column insights*
+
+#### Dark Mode
+![Kanban Board Dark Mode](./images/kanban-board-dark.png)
+*Kanban board with beautiful gradients and hover effects in dark mode*
+
+</div>
+
+---
+
+### Task Management Modals
+
+<div align="center">
+
+#### Edit Task Modal (Dark Mode)
+![Task Edit Modal](./images/task-edit-dark.png)
+*Comprehensive task editing with all fields - priority, category, due date, and description*
+
+#### Delete Confirmation (Light Mode)
+![Task Delete Confirmation](./images/task-delete-light.png)
+*Safe deletion with confirmation dialog to prevent accidental data loss*
+
+</div>
+
+---
+
+### Analytics Dashboard
+
+<div align="center">
+
+![Analytics](./images/analytics-light.png)
+*Comprehensive analytics with charts for category distribution, priority breakdown, and status overview*
+
+</div>
+
+---
+
+## 🛠️ Technology Stack
 
 ### Frontend
-- **React 19** - Modern UI framework with TypeScript
-- **Ant Design 5.x** - Enterprise-grade UI component library
-- **TypeScript** - Type-safe development
-- **Vite** - Lightning-fast build tool with HMR
-- **dayjs** - Date manipulation library (used by Ant Design)
+| Technology | Description |
+|-----------|-------------|
+| **React 19** | Modern UI framework with hooks |
+| **TypeScript** | Type-safe development |
+| **Ant Design 5.x** | Enterprise-grade UI components |
+| **Vite** | Lightning-fast build tool |
+| **DnD Kit** | Drag-and-drop for Kanban board |
+| **Recharts** | Beautiful charts for analytics |
+| **dayjs** | Date manipulation library |
 
 ### Backend
-- **NestJS 10** - Progressive Node.js framework
-- **TypeScript** - Type-safe backend development
-- **Express** - HTTP server (built into NestJS)
-- **class-validator** - DTO validation decorators
-- **class-transformer** - Object transformation
-- **File-based Storage** - JSON file for data persistence
+| Technology | Description |
+|-----------|-------------|
+| **NestJS 10** | Progressive Node.js framework |
+| **TypeScript** | Type-safe backend |
+| **Express** | HTTP server (built into NestJS) |
+| **class-validator** | DTO validation decorators |
+| **class-transformer** | Object transformation |
+| **File-based Storage** | JSON persistence |
 
-## Project Structure
+---
 
-```
-Task-Management/
-├── backend/                         # NestJS Backend
-│   ├── src/
-│   │   ├── tasks/
-│   │   │   ├── dto/
-│   │   │   │   ├── create-task.dto.ts    # Create task DTO with validation
-│   │   │   │   └── update-task.dto.ts    # Update task DTO with validation
-│   │   │   ├── task.entity.ts            # Task interface and enums
-│   │   │   ├── tasks.controller.ts       # REST API controller
-│   │   │   ├── tasks.service.ts          # Business logic layer
-│   │   │   └── tasks.module.ts           # NestJS module
-│   │   ├── data/
-│   │   │   └── tasks.json                # JSON file storage
-│   │   ├── app.module.ts                 # Root module
-│   │   └── main.ts                       # Application entry point
-│   ├── nest-cli.json
-│   ├── package.json
-│   └── tsconfig.json
-├── frontend/                        # React + Ant Design Frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── TaskForm.tsx              # Task form (Ant Design Form)
-│   │   │   ├── TaskList.tsx              # Task table (Ant Design Table)
-│   │   │   └── TaskFilters.tsx           # Search & filter controls
-│   │   ├── services/
-│   │   │   └── api.ts                    # API service layer
-│   │   ├── types/
-│   │   │   └── task.ts                   # TypeScript interfaces
-│   │   ├── App.tsx                       # Main application component
-│   │   └── main.tsx                      # Application entry point
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── vite.config.ts
-├── README.md                        # This file
-└── PRODUCT_DECISIONS.md             # Design decisions documentation
-```
-
-## Getting Started
+## 📦 Installation & Setup
 
 ### Prerequisites
 - Node.js 18+ installed
 - npm or yarn package manager
 
-### Installation
-
-#### Quick Install (All Dependencies at Once)
-```bash
-# From the project root directory
-npm run install:all
-```
-This will install dependencies for the root, backend, and frontend in one command.
-
-#### Manual Installation (Alternative)
-
-1. **Clone the repository** (if applicable):
+### Step 1: Clone Repository
 ```bash
 git clone <repository-url>
 cd Task-Management
 ```
 
-2. **Install root dependencies** (for concurrent running):
+### Step 2: Install Dependencies
+
+**Option A: All at Once (Recommended)**
 ```bash
-npm install
+npm run install:all
 ```
 
-3. **Install backend dependencies**:
+**Option B: Manual Installation**
 ```bash
-cd backend
+# Install root dependencies
 npm install
-cd ..
+
+# Install backend dependencies
+cd backend && npm install && cd ..
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
 ```
 
-4. **Install frontend dependencies**:
+### Step 3: Start Development Servers
+
+**Option A: Concurrent Mode (Recommended) ⭐**
 ```bash
-cd frontend
-npm install
-cd ..
-```
-
-### Running the Application
-
-You need to run both the backend and frontend servers simultaneously.
-
-#### ⭐ Option 1: Concurrent Mode (Recommended)
-
-**Run both servers with one command:**
-```bash
-# From the project root directory
 npm run dev
 ```
+This starts both backend and frontend with a single command!
 
-This will start:
-- **Backend** on `http://localhost:3001` (NestJS API)
-- **Frontend** on `http://localhost:5173` (React + Vite)
+**Option B: Separate Terminals**
 
-Both servers will run concurrently in the same terminal with color-coded output.
-
-#### Option 2: Manual Mode (Two Terminals)
-
-**Terminal 1 - Backend Server**:
+Terminal 1 - Backend:
 ```bash
 cd backend
 npm run dev
 ```
-The backend server will start on `http://localhost:3001`
 
-**Terminal 2 - Frontend Server**:
+Terminal 2 - Frontend:
 ```bash
 cd frontend
 npm run dev
 ```
-The frontend will start on `http://localhost:5173` (or next available port)
 
-#### Option 3: Background Processes (Unix/Mac)
-```bash
-# From the project root
-cd backend && npm run dev &
-cd ../frontend && npm run dev
-```
+### Step 4: Access the Application
+Open your browser and navigate to:
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Backend API**: [http://localhost:3001](http://localhost:3001)
 
-### Accessing the Application
+---
 
-Once both servers are running:
-1. Open your browser
-2. Navigate to `http://localhost:5173` (or the port shown in the frontend terminal)
-3. The application should connect to the backend automatically
+## 🎮 Usage Guide
 
-### Building for Production
+### Creating Tasks
+1. Click the **"+ Create Task"** button in the header
+2. Fill in the form:
+   - **Title** (required)
+   - **Description** (optional)
+   - **Priority** (High/Medium/Low)
+   - **Category** (Work/Personal/Shopping/Health/Other)
+   - **Due Date** (optional)
+3. Click **"Create"** to save
 
-**Backend**:
-```bash
-cd backend
-npm run build
-npm start
-```
+### Managing Tasks
 
-**Frontend**:
-```bash
-cd frontend
-npm run build
-npm run preview
-```
+#### On Dashboard
+- View statistics and recent activity
+- Quick overview of completion rate
+- See this week's created and completed tasks
 
-## API Documentation
+#### On Task List
+- **Search**: Type in the search bar to filter by title/description
+- **Filter by Status**: All, Pending, or Completed
+- **Advanced Filters**: Filter by priority and category
+- **Edit**: Click the edit icon on any task
+- **Delete**: Click the delete icon (with confirmation)
+- **Complete**: Check the checkbox to mark as done
+
+#### On Kanban Board
+- **Drag & Drop**: Move tasks between columns (To Do, In Progress, Completed)
+- **Quick Filters**: Click priority or category tags to filter
+- **View Stats**: Hover over column count badges to see priority breakdown
+- **Overdue Warnings**: Red badges show overdue tasks per column
+- **Aging Indicators**: Orange glow on tasks stuck in same status for 7+ days
+
+#### On Analytics
+- View distribution charts for categories and priorities
+- Track status overview with pie chart
+- Monitor completion trends
+
+### Keyboard Navigation
+- `Tab` - Navigate between elements
+- `Enter` - Submit forms, activate buttons
+- `Esc` - Close modals
+- `Space` - Toggle checkboxes
+
+---
+
+## 🔌 API Documentation
 
 ### Base URL
 ```
@@ -226,235 +267,293 @@ http://localhost:3001/api
 
 ### Endpoints
 
-#### Get All Tasks
+#### `GET /api/tasks`
+Get all tasks with optional pagination
+```bash
+curl http://localhost:3001/api/tasks?page=1&pageSize=10
 ```
-GET /api/tasks
-```
-**Response**: Array of task objects
 
-#### Get Single Task
-```
-GET /api/tasks/:id
-```
-**Response**: Task object or 404 error
-
-#### Create Task
-```
-POST /api/tasks
-Content-Type: application/json
-
-{
-  "title": "Task title (required)",
-  "description": "Task description (optional)",
-  "priority": "high|medium|low (required)",
-  "dueDate": "2024-01-15 (optional, ISO date format)"
-}
-```
-**Response**: Created task object with 201 status
-
-#### Update Task
-```
-PUT /api/tasks/:id
-Content-Type: application/json
-
-{
-  "title": "Updated title (optional)",
-  "description": "Updated description (optional)",
-  "priority": "high|medium|low (optional)",
-  "status": "pending|completed (optional)",
-  "dueDate": "2024-01-20 (optional)"
-}
-```
-**Response**: Updated task object
-
-#### Delete Task
-```
-DELETE /api/tasks/:id
-```
-**Response**: 204 No Content on success, 404 if not found
-
-### Error Responses
-All endpoints return appropriate error responses:
-- **400 Bad Request**: Invalid input data
-- **404 Not Found**: Resource not found
-- **500 Internal Server Error**: Server error
-
-Example error response:
+**Response:**
 ```json
 {
-  "error": "Error message description"
+  "data": [...],
+  "meta": {
+    "page": 1,
+    "pageSize": 10,
+    "total": 45,
+    "totalPages": 5
+  }
 }
 ```
 
-## Available Scripts
+#### `GET /api/tasks/:id`
+Get a single task by ID
+```bash
+curl http://localhost:3001/api/tasks/1
+```
 
-### Root Scripts (Concurrent Mode)
-Run these from the project root directory:
-
-- `npm run install:all` - Install all dependencies (root, backend, and frontend)
-- `npm run dev` - **Start both backend and frontend concurrently** ⭐
-- `npm run dev:backend` - Start only the backend server
-- `npm run dev:frontend` - Start only the frontend server
-- `npm run build` - Build both backend and frontend for production
-- `npm run build:backend` - Build only the backend
-- `npm run build:frontend` - Build only the frontend
-
-### Backend Scripts (NestJS)
-Run these from the `backend/` directory:
-
-- `npm run dev` - Start development server with hot reload (watch mode)
-- `npm run build` - Build TypeScript to JavaScript
-- `npm run start` - Start development server (no watch)
-- `npm run start:prod` - Start production server
-- `npm run format` - Format code with Prettier
-
-### Frontend Scripts (React + Vite)
-Run these from the `frontend/` directory:
-
-- `npm run dev` - Start Vite development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## Development Notes
-
-### Backend Architecture (NestJS)
-- **Modular Structure**: Feature-based modules (TasksModule)
-- **Dependency Injection**: NestJS built-in DI container
-- **DTO Validation**: class-validator decorators for automatic validation
-- **Service Layer**: Business logic separated from controllers
-- **Type Safety**: Full TypeScript coverage with strict mode
-- **Error Handling**: Built-in exception filters
-- **File-based Storage**: JSON file for simplicity (easily replaceable with database)
-- **CORS Enabled**: Frontend can communicate from different origin
-
-### Frontend Architecture (React + Ant Design)
-- **Component-based**: Reusable React functional components
-- **Ant Design Components**: Enterprise-grade UI components
-  - Form with built-in validation
-  - Table with pagination, sorting, and filtering
-  - Modal/Popconfirm for confirmations
-  - Message/Notification for feedback
-  - Layout components for structure
-- **State Management**: React hooks (useState, useEffect, useMemo)
-- **API Integration**: Centralized service layer
-- **Type Safety**: TypeScript interfaces matching backend DTOs
-- **Performance**: useMemo for expensive filtering operations
-- **UX**: Loading states, error handling, success feedback
-
-### Technology Choices & Rationale
-
-**Why NestJS?**
-- ✅ Enterprise-grade Node.js framework
-- ✅ Built-in TypeScript support
-- ✅ Dependency injection and modular architecture
-- ✅ Excellent for building scalable APIs
-- ✅ Built-in validation with decorators
-- ✅ Easy to test and maintain
-- ✅ Professional architecture patterns
-
-**Why Ant Design?**
-- ✅ Comprehensive component library (100+ components)
-- ✅ Professional, enterprise-grade UI
-- ✅ Excellent TypeScript support
-- ✅ Built-in form validation
-- ✅ Responsive and accessible by default
-- ✅ Consistent design language
-- ✅ Well-documented with examples
-- ✅ Battle-tested in production applications
-
-**Why Vite?**
-- ✅ Lightning-fast development server with HMR
-- ✅ Optimized production builds
-- ✅ Native ESM support
-- ✅ Great TypeScript support
-
-**Why File-based Storage?**
-- ✅ Simplicity for demonstration
-- ✅ No database setup required
-- ✅ Easy to inspect and modify
-- ✅ Can be easily replaced with database in production
-
-## Testing the Application
-
-### Manual Testing Checklist
-1. ✅ Create a new task
-2. ✅ Edit an existing task
-3. ✅ Delete a task
-4. ✅ Toggle task completion status
-5. ✅ Filter by status (All, Pending, Completed)
-6. ✅ Search for tasks
-7. ✅ Test form validation (empty title)
-8. ✅ Test with due dates
-9. ✅ Test all priority levels
-10. ✅ Test keyboard navigation
-
-### API Testing with cURL
-
-**Create a task**:
+#### `POST /api/tasks`
+Create a new task
 ```bash
 curl -X POST http://localhost:3001/api/tasks \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "Test Task",
-    "description": "Testing the API",
+    "title": "Complete project",
+    "description": "Finish the task management app",
     "priority": "high",
-    "dueDate": "2024-02-01"
+    "category": "work",
+    "dueDate": "2025-12-20"
   }'
 ```
 
-**Get all tasks**:
-```bash
-curl http://localhost:3001/api/tasks
-```
-
-**Update a task**:
+#### `PUT /api/tasks/:id`
+Update an existing task
 ```bash
 curl -X PUT http://localhost:3001/api/tasks/1 \
   -H "Content-Type: application/json" \
-  -d '{"status": "completed"}'
+  -d '{
+    "status": "completed"
+  }'
 ```
 
-**Delete a task**:
+#### `DELETE /api/tasks/:id`
+Delete a task
 ```bash
 curl -X DELETE http://localhost:3001/api/tasks/1
 ```
 
-## Troubleshooting
+---
 
-### Backend won't start
-- Ensure port 3001 is not in use
-- Check that all dependencies are installed
-- Verify Node.js version is 18+
+## 📁 Project Structure
 
-### Frontend can't connect to backend
-- Ensure backend server is running
-- Check CORS is enabled (it is by default)
-- Verify API URL in frontend (defaults to localhost:3001)
+```
+Task-Management/
+├── backend/                          # NestJS Backend
+│   ├── src/
+│   │   ├── tasks/
+│   │   │   ├── dto/                  # Data Transfer Objects
+│   │   │   │   ├── create-task.dto.ts
+│   │   │   │   ├── update-task.dto.ts
+│   │   │   │   └── pagination-query.dto.ts
+│   │   │   ├── task.entity.ts        # Task interface and enums
+│   │   │   ├── tasks.controller.ts   # REST API endpoints
+│   │   │   ├── tasks.service.ts      # Business logic
+│   │   │   └── tasks.module.ts       # NestJS module
+│   │   ├── data/
+│   │   │   └── tasks.json            # JSON file storage
+│   │   ├── app.module.ts
+│   │   └── main.ts
+│   └── test/                         # Tests (124 tests, 75% coverage)
+│
+├── frontend/                         # React + Ant Design Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Dashboard.tsx         # Dashboard view
+│   │   │   ├── TaskList.tsx          # Table view
+│   │   │   ├── KanbanBoard.tsx       # Drag-and-drop board
+│   │   │   ├── TaskStatistics.tsx    # Analytics charts
+│   │   │   ├── TaskFilters.tsx       # Search & filters
+│   │   │   ├── AdvancedFilters.tsx   # Priority/category filters
+│   │   │   ├── TaskModal.tsx         # Create/edit modal
+│   │   │   └── ...
+│   │   ├── hooks/
+│   │   │   ├── useTasks.ts           # Task CRUD operations
+│   │   │   ├── useTaskFilters.ts     # Filter logic
+│   │   │   └── useTaskImportExport.ts
+│   │   ├── services/
+│   │   │   └── api.ts                # API service layer
+│   │   ├── types/
+│   │   │   └── task.ts               # TypeScript interfaces
+│   │   └── App.tsx
+│
+├── images/                           # Screenshots for README
+├── PRODUCT_DECISIONS.md              # Design decisions & technical debt
+└── README.md                         # This file
+```
 
-### TypeScript errors
-- Run `npm run type-check` to see detailed errors
-- Ensure all dependencies are installed
-- Check tsconfig.json settings
+---
 
-## Future Enhancements
+## 🧪 Testing
 
-Potential features for future development:
-- User authentication and authorization
-- Database integration (PostgreSQL, MongoDB)
-- Task categories/tags
-- Drag-and-drop task reordering
-- Data visualization (charts, statistics)
-- Export/import functionality
-- Dark mode
-- Notifications and reminders
-- Collaborative features
-- Mobile app
+### Backend Tests
+```bash
+cd backend
+npm run test           # Run all tests
+npm run test:watch     # Watch mode
+npm run test:cov       # Coverage report
+```
 
-## License
+**Test Coverage**: 75.46% (124 tests)
+- ✅ Service layer tests
+- ✅ Controller tests
+- ✅ DTO validation tests
+- ✅ Integration tests
 
-MIT
+### Manual Testing Checklist
+- [x] Create task with all fields
+- [x] Edit task
+- [x] Delete task with confirmation
+- [x] Mark task as complete
+- [x] Search functionality
+- [x] Filter by status
+- [x] Filter by priority
+- [x] Filter by category
+- [x] Pagination
+- [x] Drag-and-drop on Kanban
+- [x] Import/export tasks
+- [x] Dark mode toggle
+- [x] Form validation
 
-## Contact
+---
 
-For questions or feedback about this project, please reach out to the interviewer.
+## 🎨 Design Highlights
+
+### Modern UI/UX
+- **Gradient backgrounds** and smooth transitions
+- **Hover effects** with subtle animations
+- **Color-coded priorities**: Red (High), Orange (Medium), Blue (Low)
+- **Visual indicators** for overdue tasks
+- **Loading states** with skeletons
+- **Toast notifications** for user feedback
+
+### Accessibility
+- ✅ Keyboard navigation
+- ✅ ARIA labels
+- ✅ Focus management
+- ✅ Screen reader friendly
+- ✅ High contrast in dark mode
+
+### Responsive Design
+- Works on desktop, tablet, and mobile
+- Adaptive layouts with Ant Design Grid
+- Touch-friendly on mobile devices
+
+---
+
+## 🚀 Available Scripts
+
+### Root Scripts
+```bash
+npm run install:all       # Install all dependencies
+npm run dev              # Start both servers
+npm run dev:backend      # Start only backend
+npm run dev:frontend     # Start only frontend
+npm run build            # Build both for production
+```
+
+### Backend Scripts
+```bash
+npm run dev              # Development with watch mode
+npm run build            # Build for production
+npm run start:prod       # Start production server
+npm run test             # Run tests
+npm run test:cov         # Test coverage
+```
+
+### Frontend Scripts
+```bash
+npm run dev              # Development server
+npm run build            # Production build
+npm run preview          # Preview production build
+npm run lint             # Run ESLint
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Port Already in Use
+If port 3001 or 5173 is already in use:
+
+**Backend:**
+```bash
+# Find process using port 3001
+lsof -i :3001
+# Kill it
+kill -9 <PID>
+```
+
+**Frontend:**
+Vite will automatically try the next available port.
+
+### Cannot Connect to Backend
+1. Ensure backend is running on port 3001
+2. Check browser console for CORS errors
+3. Verify API URL in `frontend/src/services/api.ts`
+
+### TypeScript Errors
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+---
+
+## 📚 Documentation
+
+- **[PRODUCT_DECISIONS.md](./PRODUCT_DECISIONS.md)** - Technical decisions, architecture, and trade-offs
+- **[Backend API Tests](./backend/src/tasks/)** - Comprehensive test suite
+- **[Frontend Components](./frontend/src/components/)** - Reusable React components
+
+---
+
+## 🎯 Future Enhancements
+
+- [ ] User authentication & authorization
+- [ ] PostgreSQL/MongoDB database integration
+- [ ] Real-time collaboration with WebSockets
+- [ ] Task comments and attachments
+- [ ] Email/push notifications
+- [ ] Subtasks and checklists
+- [ ] Time tracking
+- [ ] Team workspaces
+- [ ] Mobile app (React Native)
+- [ ] Advanced analytics with AI insights
+
+---
+
+## 👨‍💻 Development
+
+### Code Quality
+- **TypeScript** strict mode enabled
+- **ESLint** for code linting
+- **Prettier** for code formatting (backend)
+- **Class-validator** for DTO validation
+- **Comprehensive tests** with 75%+ coverage
+
+### Best Practices
+- ✅ Separation of concerns (Controller/Service/DTO)
+- ✅ Dependency injection
+- ✅ Error handling with proper HTTP status codes
+- ✅ Input validation on both frontend and backend
+- ✅ Type safety throughout the stack
+- ✅ Reusable components
+- ✅ Custom hooks for logic reuse
+
+---
+
+## 📄 License
+
+MIT License - feel free to use this project for learning or as a template for your own applications.
+
+---
+
+## 🙏 Acknowledgments
+
+Built with modern best practices using:
+- [React](https://reactjs.org/) - UI framework
+- [NestJS](https://nestjs.com/) - Backend framework
+- [Ant Design](https://ant.design/) - UI component library
+- [Vite](https://vitejs.dev/) - Build tool
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+
+---
+
+<div align="center">
+
+**Made with ❤️ using React, NestJS, and TypeScript**
+
+⭐ Star this repository if you find it helpful!
+
+</div>

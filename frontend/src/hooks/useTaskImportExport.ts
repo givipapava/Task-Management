@@ -44,9 +44,9 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
 
         const validationResult = TaskArraySchema.safeParse(rawData);
         if (!validationResult.success) {
-          console.error('Validation errors:', validationResult.error.errors);
+          console.error('Validation errors:', validationResult.error.issues);
           message.error(
-            `Invalid task data format: ${validationResult.error.errors[0]?.message || 'Unknown error'}`
+            `Invalid task data format: ${validationResult.error.issues[0]?.message || 'Unknown error'}`
           );
           return;
         }

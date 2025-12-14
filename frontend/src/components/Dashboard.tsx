@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col, Statistic, Progress, List, Tag, Typography, Empty, Badge, Space, Tooltip, Avatar } from 'antd';
+import { Card, Row, Col, Progress, List, Tag, Typography, Empty, Badge, Space, Tooltip, Avatar } from 'antd';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -19,10 +19,10 @@ import {
   PercentageOutlined,
 } from '@ant-design/icons';
 import { TaskPriority, TaskStatus } from '../types/task';
-import type { Task } from '../types/task';
+import type { Task, TaskCategory } from '../types/task';
 import dayjs from 'dayjs';
-import { GRADIENTS, SHADOWS, ANIMATION, EASING, DISPLAY_LIMITS } from '../constants/theme';
-import { getPriorityColor, getCategoryColor, getCategoryEmoji, createGradient } from '../utils/taskHelpers';
+import { DISPLAY_LIMITS } from '../constants/theme';
+import { getPriorityColor, getCategoryColor, getCategoryEmoji } from '../utils/taskHelpers';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -944,11 +944,12 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
               <Space direction="vertical" size={12} style={{ width: '100%' }}>
                 {stats.topCategories.map(([category, count]) => {
                   const percentage = stats.total > 0 ? Math.round((count / (stats.total - stats.completed)) * 100) : 0;
+                  const taskCategory = category as TaskCategory;
                   return (
                     <div key={category} style={{ width: '100%' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                         <Space size={8}>
-                          <span style={{ fontSize: 18 }}>{getCategoryEmoji(category)}</span>
+                          <span style={{ fontSize: 18 }}>{getCategoryEmoji(taskCategory)}</span>
                           <Text strong style={{ fontSize: 14, textTransform: 'capitalize' }}>
                             {category}
                           </Text>
@@ -957,14 +958,14 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
                           <Text type="secondary" style={{ fontSize: 13 }}>
                             {count} tasks
                           </Text>
-                          <Tag color={getCategoryColor(category)} style={{ fontSize: 11, borderRadius: 6 }}>
+                          <Tag color={getCategoryColor(taskCategory)} style={{ fontSize: 11, borderRadius: 6 }}>
                             {percentage}%
                           </Tag>
                         </Space>
                       </div>
                       <Progress
                         percent={percentage}
-                        strokeColor={getCategoryColor(category)}
+                        strokeColor={getCategoryColor(taskCategory)}
                         showInfo={false}
                         strokeWidth={8}
                         style={{ marginBottom: 4 }}
@@ -1426,7 +1427,9 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
                       onClick={() => onTaskClick?.(task)}
                       style={{
                         background: darkMode ? 'rgba(255, 255, 255, 0.04)' : '#fff',
-                        border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+                        borderTop: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+                        borderRight: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+                        borderBottom: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
                         borderLeft: `4px solid ${getPriorityColor(task.priority)}`,
                         borderRadius: '12px',
                         padding: 16,
