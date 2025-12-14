@@ -88,11 +88,11 @@ Then open **[http://localhost:5173](http://localhost:5173)** in your browser!
 <div align="center">
 
 #### Light Mode
-![Kanban Board Light Mode](./images/kanban-board-light-new.png)
+![Kanban Board Light Mode](./images/kanban-board-light-mode.png)
 *Drag-and-drop Kanban board with statistics, quick filters, and enhanced column insights*
 
 #### Dark Mode
-![Kanban Board Dark Mode](./images/kanban-board-dark.png)
+![Kanban Board Dark Mode](./images/kanban-board-dark-mode.png)
 *Kanban board with beautiful gradients and hover effects in dark mode*
 
 </div>
