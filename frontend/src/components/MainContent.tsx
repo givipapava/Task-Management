@@ -68,9 +68,9 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
       case 'dashboard':
         return 'Dashboard';
       case 'list':
-        return 'Task List';
+        return 'Tasks';
       case 'kanban':
-        return 'Kanban Board';
+        return 'Board';
       case 'analytics':
         return 'Analytics';
       default:
@@ -135,7 +135,7 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
 
           {viewMode === 'kanban' && (
             <KanbanBoard
-              tasks={filteredTasks}
+              tasks={tasks}
               darkMode={darkMode}
               onEdit={onEditTask}
               onDelete={onDeleteTask}

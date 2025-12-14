@@ -30,8 +30,8 @@ function AppContent({ darkMode, onToggleDarkMode }: AppContentProps) {
   const location = useLocation();
 
   const getViewModeFromPath = (pathname: string): ViewMode => {
-    if (pathname === '/list') return 'list';
-    if (pathname === '/kanban') return 'kanban';
+    if (pathname === '/tasks') return 'list';
+    if (pathname === '/board') return 'kanban';
     if (pathname === '/analytics') return 'analytics';
     return 'dashboard';
   };
@@ -39,8 +39,13 @@ function AppContent({ darkMode, onToggleDarkMode }: AppContentProps) {
   const viewMode = getViewModeFromPath(location.pathname);
 
   const handleViewModeChange = (mode: ViewMode) => {
-    const path = mode === 'dashboard' ? '/' : `/${mode}`;
-    navigate(path);
+    const pathMap: Record<ViewMode, string> = {
+      dashboard: '/',
+      list: '/tasks',
+      kanban: '/board',
+      analytics: '/analytics',
+    };
+    navigate(pathMap[mode]);
   };
 
   const {
@@ -176,8 +181,8 @@ function App() {
         <AntApp message={{ top: 80, maxCount: 3 }}>
           <Routes>
             <Route path="/" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
-            <Route path="/list" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
-            <Route path="/kanban" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
+            <Route path="/tasks" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
+            <Route path="/board" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
             <Route path="/analytics" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

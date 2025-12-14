@@ -34,12 +34,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = React.memo(({
     {
       key: 'list',
       icon: <UnorderedListOutlined />,
-      label: <Link to="/list">Task List</Link>,
+      label: <Link to="/tasks">Tasks</Link>,
     },
     {
       key: 'kanban',
       icon: <AppstoreOutlined />,
-      label: <Link to="/kanban">Kanban Board</Link>,
+      label: <Link to="/board">Board</Link>,
     },
     {
       key: 'analytics',
