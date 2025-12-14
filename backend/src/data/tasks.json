@@ -1,0 +1,144 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Task 1: Update documentation for API v2",
+      "description": "Need to complete this before the deadline.",
+      "priority": "high",
+      "status": "completed",
+      "category": "health",
+      "dueDate": "2025-12-04",
+      "createdAt": "2025-12-04T11:22:30.720Z",
+      "updatedAt": "2025-12-05T11:22:30.721Z"
+    },
+    {
+      "id": "2",
+      "title": "Task 2: Grocery shopping for the week",
+      "description": "Important for the upcoming release.",
+      "priority": "low",
+      "status": "pending",
+      "category": "personal",
+      "dueDate": "2025-12-26",
+      "createdAt": "2025-12-08T11:22:30.721Z",
+      "updatedAt": "2025-12-09T11:22:30.721Z"
+    },
+    {
+      "id": "3",
+      "title": "Task 3: Annual health checkup",
+      "description": "Routine maintenance task that needs to be done regularly.",
+      "priority": "medium",
+      "status": "pending",
+      "category": "health",
+      "dueDate": "2025-12-06",
+      "createdAt": "2025-12-02T11:22:30.721Z",
+      "updatedAt": "2025-12-10T11:22:30.721Z"
+    },
+    {
+      "id": "4",
+      "title": "Task 4: Implement drag-and-drop functionality",
+      "description": null,
+      "priority": "medium",
+      "status": "in_progress",
+      "category": "other",
+      "createdAt": "2025-11-23T11:22:30.721Z",
+      "updatedAt": "2025-11-28T11:22:30.721Z"
+    },
+    {
+      "id": "5",
+      "title": "Task 5: Plan weekend hiking trip",
+      "description": "Detailed implementation with code review required.",
+      "priority": "high",
+      "status": "pending",
+      "category": "health",
+      "createdAt": "2025-12-09T11:22:30.721Z",
+      "updatedAt": "2025-12-14T11:22:30.721Z"
+    },
+    {
+      "id": "6",
+      "title": "Task 6: Buy Christmas gifts",
+      "description": "Coordinate with team members for this.",
+      "priority": "medium",
+      "status": "pending",
+      "category": "other",
+      "dueDate": "2025-12-26",
+      "createdAt": "2025-12-02T11:22:30.721Z",
+      "updatedAt": "2025-12-03T11:22:30.721Z"
+    },
+    {
+      "id": "7",
+      "title": "Task 7: Refactor database queries",
+      "description": "Research required before starting work.",
+      "priority": "high",
+      "status": "completed",
+      "category": "personal",
+      "dueDate": "2026-01-02",
+      "createdAt": "2025-12-11T11:22:30.721Z",
+      "updatedAt": "2025-12-14T11:22:30.721Z"
+    },
+    {
+      "id": "8",
+      "title": "Task 8: Dentist appointment",
+      "description": "Follow up on previous discussion.",
+      "priority": "medium",
+      "status": "in_progress",
+      "category": "other",
+      "createdAt": "2025-12-13T11:22:30.721Z",
+      "updatedAt": "2025-12-14T11:22:30.721Z"
+    },
+    {
+      "id": "9",
+      "title": "Task 9: Review pull requests",
+      "description": "Critical for system stability.",
+      "priority": "medium",
+      "status": "completed",
+      "category": "personal",
+      "dueDate": "2025-12-22",
+      "createdAt": "2025-12-03T11:22:30.721Z",
+      "updatedAt": "2025-12-12T11:22:30.721Z"
+    },
+    {
+      "id": "10",
+      "title": "Task 10: Learn TypeScript advanced patterns",
+      "description": "This task requires immediate attention and careful planning.",
+      "priority": "medium",
+      "status": "pending",
+      "category": "other",
+      "dueDate": "2026-01-01",
+      "createdAt": "2025-11-14T11:22:30.721Z",
+      "updatedAt": "2025-12-11T11:22:30.721Z"
+    },
+    {
+      "id": "11",
+      "title": "Task 11: Setup CI/CD pipeline",
+      "description": "Need to complete this before the deadline.",
+      "priority": "high",
+      "status": "in_progress",
+      "category": "health",
+      "dueDate": "2025-12-16",
+      "createdAt": "2025-11-27T11:22:30.721Z",
+      "updatedAt": "2025-12-08T11:22:30.721Z"
+    },
+    {
+      "id": "12",
+      "title": "Task 12: Buy new running shoes",
+      "description": "Important for the upcoming release.",
+      "priority": "high",
+      "status": "completed",
+      "category": "health",
+      "dueDate": "2025-12-23",
+      "createdAt": "2025-11-27T11:22:30.721Z",
+      "updatedAt": "2025-12-13T11:22:30.721Z"
+    },
+    {
+      "id": "13",
+      "title": "Task 13: Write unit tests for new features",
+      "description": "Routine maintenance task that needs to be done regularly.",
+      "priority": "low",
+      "status": "completed",
+      "category": "work",
+      "dueDate": "2025-12-09",
+      "createdAt": "2025-12-01T11:22:30.721Z",
+      "updatedAt": "2025-12-14T11:22:30.721Z"
+    }
+  ]
+  }
