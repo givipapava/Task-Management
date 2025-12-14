@@ -71,10 +71,6 @@ Then open **[http://localhost:5173](http://localhost:5173)** in your browser!
 
 <div align="center">
 
-#### Light Mode
-![Task List Light Mode](./images/task-list-light.png)
-*Comprehensive table view with search, filters, and pagination*
-
 #### Dark Mode
 ![Task List Dark Mode](./images/task-list-dark.png)
 *Task list in dark mode with advanced filtering capabilities*
