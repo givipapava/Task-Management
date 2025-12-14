@@ -10,7 +10,6 @@ import { join } from 'path';
 @Injectable()
 export class FileSystemHealthIndicator extends HealthIndicator {
   private readonly logger = new Logger(FileSystemHealthIndicator.name);
-  // Use same path resolution as TasksService for consistency
   private readonly dataPath = join(__dirname, '../../data/tasks.json');
 
   /**
@@ -20,14 +19,11 @@ export class FileSystemHealthIndicator extends HealthIndicator {
    */
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     try {
-      // Check if file exists and is readable
       await fs.access(this.dataPath, fs.constants.R_OK | fs.constants.W_OK);
 
-      // Try to read and parse the file
       const content = await fs.readFile(this.dataPath, 'utf-8');
       const data = JSON.parse(content);
 
-      // Verify structure
       if (!data || typeof data !== 'object' || !Array.isArray(data.tasks)) {
         throw new Error('Invalid tasks.json structure');
       }

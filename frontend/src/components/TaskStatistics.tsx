@@ -271,7 +271,6 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
 
   return (
     <div>
-      {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <Title level={2} style={{ marginBottom: 8 }}>
           Task Analytics Dashboard
@@ -281,7 +280,6 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Text>
       </div>
 
-      {/* Key Metrics */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card
@@ -402,7 +400,6 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
       </Row>
 
-      {/* Secondary Metrics */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} md={6}>
           <Card hoverable={false}>
@@ -474,7 +471,6 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
       </Row>
 
-      {/* Charts Row 1 */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} lg={12}>
           <Card
@@ -514,7 +510,6 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
       </Row>
 
-      {/* Charts Row 2 */}
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card
@@ -552,7 +547,6 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
         </Col>
       </Row>
 
-      {/* Priority Summary */}
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} sm={8}>
           <Card

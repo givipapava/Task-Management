@@ -26,7 +26,6 @@ class ApiClient {
       },
     });
 
-    // Configure retry logic for network errors and 5xx errors
     axiosRetry(this.client, {
       retries: 3,
       retryDelay: axiosRetry.exponentialDelay,
@@ -41,7 +40,6 @@ class ApiClient {
       },
     });
 
-    // Response interceptor for global error handling
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {

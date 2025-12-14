@@ -16,7 +16,7 @@ import { FileSystemHealthIndicator } from './indicators/file-system.health';
  */
 @ApiTags('health')
 @Controller('health')
-@SkipThrottle() // Exclude all health endpoints from rate limiting
+@SkipThrottle()
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
@@ -39,17 +39,13 @@ export class HealthController {
   @ApiResponse({ status: 503, description: 'Application is unhealthy' })
   check() {
     return this.health.check([
-      // Check if data file is accessible and valid
       () => this.fileSystem.isHealthy('tasks_file'),
-      // Check if disk storage has at least 10% free space (90% used is threshold)
       () =>
         this.disk.checkStorage('storage', {
           path: '/',
           thresholdPercent: 0.9,
         }),
-      // Check if memory heap doesn't exceed 150MB
       () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
-      // Check if RSS memory doesn't exceed 150MB
       () => this.memory.checkRSS('memory_rss', 150 * 1024 * 1024),
     ]);
   }

@@ -13,35 +13,28 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
 
-  // Get environment variables
   const port = configService.get<number>('PORT', 3001);
   const corsOrigin = configService.get<string>('CORS_ORIGIN', 'http://localhost:5173');
   const nodeEnv = configService.get<string>('NODE_ENV', 'development');
 
-  // Security: Limit request body size to prevent DoS attacks
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Security: Enable Helmet for security headers
   app.use(
     helmet({
       contentSecurityPolicy: nodeEnv === 'production' ? undefined : false,
     }),
   );
 
-  // Performance: Enable compression for responses
   app.use(compression());
 
-  // Enable CORS for frontend
   app.enableCors({
     origin: corsOrigin,
     credentials: true,
   });
 
-  // Enable global exception filter for standardized error responses
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -50,7 +43,6 @@ async function bootstrap() {
     }),
   );
 
-  // Setup Swagger API documentation
   const config = new DocumentBuilder()
     .setTitle('Task Management API')
     .setDescription('RESTful API for managing tasks with priorities, categories, and statuses')
@@ -60,7 +52,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Enable graceful shutdown
   app.enableShutdownHooks();
 
   await app.listen(port);

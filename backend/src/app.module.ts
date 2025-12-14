@@ -19,11 +19,10 @@ import { TimeoutMiddleware } from './common/middleware/timeout.middleware';
         abortEarly: false,
       },
     }),
-    // Rate limiting: 100 requests per minute per IP
     ThrottlerModule.forRoot([
       {
-        ttl: 60000, // 1 minute
-        limit: 100, // 100 requests
+        ttl: 60000,
+        limit: 100,
       },
     ]),
     TasksModule,

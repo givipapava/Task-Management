@@ -31,6 +31,7 @@ interface MainContentProps {
   searchQuery: string;
   filterStatus: FilterStatus;
   advancedFilters: AdvancedFilterOptions;
+  darkMode: boolean;
   pagination?: PaginationMeta | null;
   onSearchChange: (query: string) => void;
   onFilterChange: (status: FilterStatus) => void;
@@ -51,6 +52,7 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
   searchQuery,
   filterStatus,
   advancedFilters,
+  darkMode,
   pagination,
   onSearchChange,
   onFilterChange,
@@ -101,7 +103,7 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
       ) : (
         <>
           {viewMode === 'dashboard' && (
-            <Dashboard tasks={tasks} onTaskClick={onEditTask} />
+            <Dashboard tasks={tasks} onTaskClick={onEditTask} darkMode={darkMode} />
           )}
 
           {viewMode === 'list' && (

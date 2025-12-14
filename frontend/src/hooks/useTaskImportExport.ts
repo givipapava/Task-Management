@@ -26,7 +26,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
-      // 1. Check file size
       if (file.size > MAX_FILE_SIZE) {
         message.error('File too large. Maximum size is 5MB.');
         return;
@@ -35,7 +34,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
       try {
         const text = await file.text();
 
-        // 2. Parse JSON safely
         let rawData;
         try {
           rawData = JSON.parse(text);
@@ -44,7 +42,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
           return;
         }
 
-        // 3. Validate schema with Zod
         const validationResult = TaskArraySchema.safeParse(rawData);
         if (!validationResult.success) {
           console.error('Validation errors:', validationResult.error.errors);
@@ -54,7 +51,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
           return;
         }
 
-        // 4. Sanitize data to prevent XSS
         const sanitizedTasks = validationResult.data.map((task) => ({
           ...task,
           title: DOMPurify.sanitize(task.title, { ALLOWED_TAGS: [] }),
@@ -63,7 +59,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
             : undefined,
         }));
 
-        // 5. Check for duplicate IDs
         const existingIds = new Set(tasks.map((t) => t.id));
         const hasConflicts = sanitizedTasks.some((t) => t.id && existingIds.has(t.id));
 
@@ -80,7 +75,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
             },
           });
         } else {
-          // 6. Add new tasks with proper defaults
           const newTasks = sanitizedTasks.map((t) => ({
             ...t,
             id: t.id || crypto.randomUUID(),
@@ -106,7 +100,6 @@ export const useTaskImportExport = (tasks: Task[], setTasks: (tasks: Task[]) => 
   };
 };
 
-// Helper function to merge tasks
 function mergeTasks(existingTasks: Task[], importedTasks: any[]): Task[] {
   const taskMap = new Map(existingTasks.map((t) => [t.id, t]));
 
@@ -116,10 +109,9 @@ function mergeTasks(existingTasks: Task[], importedTasks: any[]): Task[] {
         ...task,
         id: task.id,
         createdAt: task.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString(), // Update timestamp on merge
+        updatedAt: new Date().toISOString(),
       } as Task);
     } else {
-      // Add as new task if no ID
       taskMap.set(crypto.randomUUID(), {
         ...task,
         id: crypto.randomUUID(),

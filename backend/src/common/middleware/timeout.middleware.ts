@@ -8,19 +8,16 @@ import { Request, Response, NextFunction } from 'express';
 @Injectable()
 export class TimeoutMiddleware implements NestMiddleware {
   private readonly logger = new Logger(TimeoutMiddleware.name);
-  private readonly timeout = 30000; // 30 seconds
+  private readonly timeout = 30000;
 
   use(req: Request, res: Response, next: NextFunction) {
     let isTimedOut = false;
 
-    // Set timeout and handle it properly
     const timer = setTimeout(() => {
       if (!res.headersSent) {
         isTimedOut = true;
         this.logger.warn(`Request timeout: ${req.method} ${req.url}`);
 
-        // Send timeout response instead of throwing
-        // Throwing in setTimeout is outside request context and can't be caught
         res.status(408).json({
           statusCode: 408,
           message: 'Request timeout - operation took too long',
@@ -31,7 +28,6 @@ export class TimeoutMiddleware implements NestMiddleware {
       }
     }, this.timeout);
 
-    // Clear timeout when response is finished or connection closed
     const cleanup = () => {
       clearTimeout(timer);
       if (!isTimedOut) {

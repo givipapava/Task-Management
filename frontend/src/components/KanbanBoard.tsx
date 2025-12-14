@@ -142,7 +142,6 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
     })
   );
 
-  // Memoize task grouping for better performance
   const { pendingTasks, inProgressTasks, completedTasks, taskMap } = useMemo(() => {
     const pending: Task[] = [];
     const inProgress: Task[] = [];
@@ -168,7 +167,6 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
     };
   }, [tasks]);
 
-  // Column to status mapping
   const columnToStatus: Record<string, TaskStatus> = useMemo(
     () => ({
       'pending-column': TaskStatus.PENDING,
@@ -191,7 +189,6 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
         return;
       }
 
-      // O(1) lookup instead of O(n) find
       const activeTask = taskMap.get(active.id as string);
       if (!activeTask) {
         setActiveId(null);
@@ -203,7 +200,6 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
       if (newStatus && activeTask.status !== newStatus) {
         const oldStatus = activeTask.status;
 
-        // Show success toast notification (before status change for better UX)
         const statusLabels = {
           [TaskStatus.PENDING]: 'To Do',
           [TaskStatus.IN_PROGRESS]: 'In Progress',
@@ -221,14 +217,11 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
           duration: 2.5,
         });
 
-        // Trigger the status change (silent mode - no notification from useTasks)
         onStatusChange(activeTask.id, newStatus, true);
 
-        // Set animation state
         setJustDroppedId(activeTask.id);
         setLastDroppedColumn(over.id as string);
 
-        // Clear animation after 600ms
         setTimeout(() => {
           setJustDroppedId(null);
         }, 600);

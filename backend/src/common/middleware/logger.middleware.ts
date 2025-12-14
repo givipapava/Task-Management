@@ -14,13 +14,11 @@ export class LoggerMiddleware implements NestMiddleware {
     const userAgent = req.get('user-agent') || '';
     const startTime = Date.now();
 
-    // Log when response finishes
     res.on('finish', () => {
       const { statusCode } = res;
       const duration = Date.now() - startTime;
       const message = `${method} ${originalUrl} ${statusCode} ${duration}ms - ${userAgent} ${ip}`;
 
-      // Log with appropriate level based on status code
       if (statusCode >= 500) {
         this.logger.error(message);
       } else if (statusCode >= 400) {

@@ -37,9 +37,8 @@ export class TasksService {
   private readonly dataDir = join(__dirname, '../data');
   private readonly mutex = new Mutex();
 
-  // In-memory cache configuration
   private cache: CacheEntry | null = null;
-  private readonly cacheTTL = 5000; // 5 seconds cache TTL
+  private readonly cacheTTL = 5000;
 
   /**
    * Check if cache is valid
@@ -67,7 +66,6 @@ export class TasksService {
    * @throws InternalServerErrorException if file read or parse fails
    */
   private async readData(): Promise<TasksData> {
-    // Return cached data if valid
     if (this.isCacheValid()) {
       this.logger.debug('Returning cached data');
       return this.cache!.data;
@@ -77,7 +75,6 @@ export class TasksService {
       const data = await fs.readFile(this.dataPath, 'utf-8');
       const parsedData = JSON.parse(data);
 
-      // Update cache
       this.cache = {
         data: parsedData,
         timestamp: Date.now(),
@@ -90,7 +87,6 @@ export class TasksService {
         this.logger.warn(`Tasks file not found at ${this.dataPath}, initializing empty task list`);
         const emptyData = { tasks: [] };
 
-        // Cache empty result too
         this.cache = {
           data: emptyData,
           timestamp: Date.now(),
@@ -135,7 +131,6 @@ export class TasksService {
     try {
       await this.ensureDataDir();
 
-      // Step 1: Create backup of existing file (if it exists)
       try {
         await fs.access(this.dataPath);
         await fs.copyFile(this.dataPath, backupPath);
@@ -144,29 +139,22 @@ export class TasksService {
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
           throw error;
         }
-        // File doesn't exist yet, no backup needed
       }
 
-      // Step 2: Write to temporary file
       await fs.writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8');
 
-      // Step 3: Atomic rename (overwrites target file atomically)
       await fs.rename(tempPath, this.dataPath);
 
       this.logger.debug(`Successfully wrote ${data.tasks.length} tasks to file (atomic write)`);
 
-      // Step 4: Invalidate cache after write
       this.invalidateCache();
 
-      // Step 5: Clean up backup file after successful write
       try {
         await fs.unlink(backupPath);
         this.logger.debug('Cleaned up backup file');
       } catch (unlinkError) {
-        // Ignore if backup doesn't exist
       }
     } catch (error) {
-      // Rollback: Try to restore from backup if write failed
       try {
         await fs.access(backupPath);
         await fs.copyFile(backupPath, this.dataPath);
@@ -175,11 +163,9 @@ export class TasksService {
         this.logger.error('Failed to rollback from backup', rollbackError);
       }
 
-      // Clean up temp file if it exists
       try {
         await fs.unlink(tempPath);
       } catch (unlinkError) {
-        // Ignore if temp file doesn't exist
       }
 
       this.logger.error(`Failed to write tasks file: ${error.message}`, error.stack);
@@ -208,8 +194,6 @@ export class TasksService {
     this.logger.debug('Retrieving tasks', { pagination: paginationQuery });
     const data = await this.readData();
 
-    // If no pagination requested, return all tasks (backward compatibility)
-    // Check if page or pageSize are actually set (not just undefined)
     const hasPagination = paginationQuery?.page !== undefined || paginationQuery?.pageSize !== undefined;
 
     if (!hasPagination) {
@@ -217,23 +201,19 @@ export class TasksService {
       return data.tasks;
     }
 
-    // Apply pagination
     const page = paginationQuery.page ?? 1;
     const pageSize = paginationQuery.pageSize ?? 10;
     const total = data.tasks.length;
-    const totalPages = Math.ceil(total / pageSize) || 1; // At least 1 page
+    const totalPages = Math.ceil(total / pageSize) || 1;
 
-    // Validate page number
     if (page < 1) {
       throw new BadRequestException('Page number must be greater than 0');
     }
 
-    // For empty results, allow page 1 only
     if (total === 0 && page > 1) {
       throw new BadRequestException('No data available');
     }
 
-    // For non-empty results, validate page range
     if (total > 0 && page > totalPages) {
       throw new BadRequestException(
         `Page ${page} does not exist. Total pages: ${totalPages}`,
@@ -271,7 +251,6 @@ export class TasksService {
   async findOne(id: string): Promise<Task> {
     this.logger.debug(`Retrieving task with ID: ${id}`);
 
-    // Use mutex for consistent read to prevent reading during writes
     return this.mutex.runExclusive(async () => {
       const data = await this.readData();
       const task = data.tasks.find((t) => t.id === id);
@@ -323,7 +302,6 @@ export class TasksService {
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
     this.logger.log(`Updating task with ID: ${id}`);
 
-    // Wrap entire read-modify-write operation in mutex to prevent race conditions
     return this.mutex.runExclusive(async () => {
       const data = await this.readData();
       const taskIndex = data.tasks.findIndex((t) => t.id === id);
@@ -356,7 +334,6 @@ export class TasksService {
   async remove(id: string): Promise<void> {
     this.logger.log(`Deleting task with ID: ${id}`);
 
-    // Wrap entire read-modify-write operation in mutex to prevent race conditions
     return this.mutex.runExclusive(async () => {
       const data = await this.readData();
       const taskIndex = data.tasks.findIndex((t) => t.id === id);

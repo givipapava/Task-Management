@@ -39,13 +39,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console in development
     if (import.meta.env.DEV) {
       console.error('Error Boundary caught an error:', error, errorInfo);
     }
-
-    // In production, you could log to an error reporting service
-    // Example: logErrorToService(error, errorInfo);
   }
 
   private handleReset = () => {
@@ -61,12 +57,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Default error UI
       return (
         <div style={{
           display: 'flex',

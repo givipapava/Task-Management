@@ -13,7 +13,6 @@ export const useTasks = () => {
   const inflightRequests = useRef(new Map<string, Promise<Task>>());
 
   const loadTasks = useCallback(async () => {
-    // Cancel previous request if still pending
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -25,12 +24,10 @@ export const useTasks = () => {
       setLoading(true);
       const data = await taskApi.getAllTasks(abortController.signal);
 
-      // Only update if request wasn't cancelled
       if (!abortController.signal.aborted) {
         setTasks(data);
       }
     } catch (error) {
-      // Ignore abort errors
       if (error instanceof Error && error.name === 'CanceledError') {
         return;
       }
@@ -47,7 +44,6 @@ export const useTasks = () => {
   useEffect(() => {
     loadTasks();
 
-    // Cleanup: cancel pending request on unmount
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -56,7 +52,6 @@ export const useTasks = () => {
   }, [loadTasks]);
 
   const createTask = useCallback(async (data: CreateTaskDto) => {
-    // Request deduplication - prevent duplicate creates
     const requestKey = `create-${JSON.stringify(data)}`;
 
     if (inflightRequests.current.has(requestKey)) {

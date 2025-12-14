@@ -18,20 +18,11 @@ import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { PaginatedTasksResponseDto } from './dto/paginated-response.dto';
 import { Task } from './task.entity';
 
-/**
- * Controller handling all task-related HTTP endpoints
- * Base route: /api/tasks
- */
 @ApiTags('tasks')
 @Controller('api/tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  /**
-   * Retrieve all tasks with optional pagination
-   * @param paginationQuery Optional pagination parameters (page, pageSize)
-   * @returns Array of all tasks or paginated response
-   */
   @Get()
   @ApiOperation({
     summary: 'Get all tasks',
@@ -47,11 +38,6 @@ export class TasksController {
     return this.tasksService.findAll(paginationQuery);
   }
 
-  /**
-   * Retrieve a single task by ID
-   * @param id Task UUID
-   * @returns Single task or 404
-   */
   @Get(':id')
   @ApiOperation({ summary: 'Get task by ID', description: 'Retrieve a single task by its unique identifier' })
   @ApiParam({ name: 'id', description: 'Task ID', example: '1' })
@@ -62,11 +48,6 @@ export class TasksController {
     return this.tasksService.findOne(id);
   }
 
-  /**
-   * Create a new task
-   * @param createTaskDto Task creation data
-   * @returns Newly created task
-   */
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create new task', description: 'Create a new task with the provided data' })
@@ -77,12 +58,6 @@ export class TasksController {
     return this.tasksService.create(createTaskDto);
   }
 
-  /**
-   * Update an existing task
-   * @param id Task UUID
-   * @param updateTaskDto Task update data
-   * @returns Updated task or 404
-   */
   @Put(':id')
   @ApiOperation({ summary: 'Update task', description: 'Update an existing task by ID' })
   @ApiParam({ name: 'id', description: 'Task ID', example: '1' })
@@ -94,11 +69,6 @@ export class TasksController {
     return this.tasksService.update(id, updateTaskDto);
   }
 
-  /**
-   * Delete a task
-   * @param id Task UUID
-   * @returns 204 No Content or 404
-   */
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete task', description: 'Delete a task by ID' })

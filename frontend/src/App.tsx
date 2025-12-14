@@ -29,7 +29,6 @@ function AppContent({ darkMode, onToggleDarkMode }: AppContentProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine view mode from URL
   const getViewModeFromPath = (pathname: string): ViewMode => {
     if (pathname === '/list') return 'list';
     if (pathname === '/kanban') return 'kanban';
@@ -39,7 +38,6 @@ function AppContent({ darkMode, onToggleDarkMode }: AppContentProps) {
 
   const viewMode = getViewModeFromPath(location.pathname);
 
-  // Handle view mode change and update URL
   const handleViewModeChange = (mode: ViewMode) => {
     const path = mode === 'dashboard' ? '/' : `/${mode}`;
     navigate(path);
@@ -127,6 +125,7 @@ function AppContent({ darkMode, onToggleDarkMode }: AppContentProps) {
           searchQuery={searchQuery}
           filterStatus={filterStatus}
           advancedFilters={advancedFilters}
+          darkMode={darkMode}
           onSearchChange={setSearchQuery}
           onFilterChange={setFilterStatus}
           onAdvancedFilterChange={setAdvancedFilters}

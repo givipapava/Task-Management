@@ -6,7 +6,7 @@ import type { Task, CreateTaskDto, PaginationMeta } from '../types/task';
 
 export const useTasksPaginated = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [allTasks, setAllTasks] = useState<Task[]>([]); // For filters/search that need all data
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [pagination, setPagination] = useState<PaginationMeta>({
     page: 1,
     pageSize: 10,
@@ -21,7 +21,6 @@ export const useTasksPaginated = () => {
   const inflightRequests = useRef(new Map<string, Promise<Task>>());
 
   const loadTasks = useCallback(async (page: number = 1, pageSize: number = 10) => {
-    // Cancel previous request if still pending
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -36,13 +35,11 @@ export const useTasksPaginated = () => {
         abortController.signal
       );
 
-      // Only update if request wasn't cancelled
       if (!abortController.signal.aborted) {
         setTasks(response.data);
         setPagination(response.meta);
       }
     } catch (error) {
-      // Ignore abort errors
       if (error instanceof Error && error.name === 'CanceledError') {
         return;
       }
@@ -56,22 +53,19 @@ export const useTasksPaginated = () => {
     }
   }, []);
 
-  // Also load all tasks for filters/search (if needed)
   const loadAllTasks = useCallback(async () => {
     try {
       const data = await taskApi.getAllTasks();
       setAllTasks(data);
     } catch (error) {
-      // Silent fail for background load
       console.error('Failed to load all tasks for filtering:', error);
     }
   }, []);
 
   useEffect(() => {
     loadTasks(pagination.page, pagination.pageSize);
-    loadAllTasks(); // Load all tasks for filtering
+    loadAllTasks();
 
-    // Cleanup: cancel pending request on unmount
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -84,7 +78,6 @@ export const useTasksPaginated = () => {
   }, [loadTasks]);
 
   const createTask = useCallback(async (data: CreateTaskDto) => {
-    // Request deduplication - prevent duplicate creates
     const requestKey = `create-${JSON.stringify(data)}`;
 
     if (inflightRequests.current.has(requestKey)) {
@@ -96,7 +89,6 @@ export const useTasksPaginated = () => {
         setSubmitting(true);
         const newTask = await taskApi.createTask(data);
 
-        // Reload current page to show the new task
         await loadTasks(pagination.page, pagination.pageSize);
         await loadAllTasks();
 
@@ -123,7 +115,6 @@ export const useTasksPaginated = () => {
       setSubmitting(true);
       const updatedTask = await taskApi.updateTask(id, data);
 
-      // Update in current page view
       setTasks((prev) => prev.map((task) => (task.id === id ? updatedTask : task)));
       setAllTasks((prev) => prev.map((task) => (task.id === id ? updatedTask : task)));
 
@@ -144,7 +135,6 @@ export const useTasksPaginated = () => {
     try {
       await taskApi.deleteTask(id);
 
-      // Reload current page
       await loadTasks(pagination.page, pagination.pageSize);
       await loadAllTasks();
 
@@ -201,7 +191,7 @@ export const useTasksPaginated = () => {
 
   return {
     tasks,
-    allTasks, // For components that need all tasks for filtering
+    allTasks,
     loading,
     submitting,
     pagination,
