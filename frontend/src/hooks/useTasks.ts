@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { message } from 'antd';
+import { App } from 'antd';
 import { taskApi } from '../services/api';
 import { TaskStatus } from '../types/task';
 import type { Task, CreateTaskDto } from '../types/task';
 
 export const useTasks = () => {
+  const { message } = App.useApp();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -41,7 +42,7 @@ export const useTasks = () => {
         setLoading(false);
       }
     }
-  }, []);
+  }, [message]);
 
   useEffect(() => {
     loadTasks();
@@ -83,7 +84,7 @@ export const useTasks = () => {
 
     inflightRequests.current.set(requestKey, requestPromise);
     return requestPromise;
-  }, []);
+  }, [message]);
 
   const updateTask = useCallback(async (id: string, data: Partial<CreateTaskDto>) => {
     try {
@@ -101,7 +102,7 @@ export const useTasks = () => {
     } finally {
       setSubmitting(false);
     }
-  }, []);
+  }, [message]);
 
   const deleteTask = useCallback(async (id: string) => {
     try {
@@ -115,7 +116,7 @@ export const useTasks = () => {
       message.error('Failed to delete task. Please try again.');
       throw new Error('Failed to delete task');
     }
-  }, []);
+  }, [message]);
 
   const toggleTaskStatus = useCallback(async (task: Task) => {
     const newStatus = task.status === TaskStatus.COMPLETED ? TaskStatus.PENDING : TaskStatus.COMPLETED;
@@ -130,9 +131,9 @@ export const useTasks = () => {
     } catch {
       message.error('Failed to update task status. Please try again.');
     }
-  }, []);
+  }, [message]);
 
-  const changeTaskStatus = useCallback(async (taskId: string, newStatus: TaskStatus) => {
+  const changeTaskStatus = useCallback(async (taskId: string, newStatus: TaskStatus, silent = false) => {
     const statusLabels = {
       [TaskStatus.PENDING]: 'Pending',
       [TaskStatus.IN_PROGRESS]: 'In Progress',
@@ -147,14 +148,17 @@ export const useTasks = () => {
     try {
       const updatedTask = await taskApi.updateTask(taskId, { status: newStatus });
       setTasks((prev) => prev.map((task) => (task.id === taskId ? updatedTask : task)));
-      message.success({
-        content: `${statusIcons[newStatus]} Task moved to ${statusLabels[newStatus]}`,
-        duration: 2,
-      });
+
+      if (!silent) {
+        message.success({
+          content: `${statusIcons[newStatus]} Task moved to ${statusLabels[newStatus]}`,
+          duration: 2,
+        });
+      }
     } catch {
       message.error('Failed to update task status. Please try again.');
     }
-  }, []);
+  }, [message]);
 
   return {
     tasks,

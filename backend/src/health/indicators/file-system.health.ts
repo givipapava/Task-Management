@@ -11,7 +11,7 @@ import { join } from 'path';
 export class FileSystemHealthIndicator extends HealthIndicator {
   private readonly logger = new Logger(FileSystemHealthIndicator.name);
   // Use same path resolution as TasksService for consistency
-  private readonly dataPath = join(__dirname, '../data/tasks.json');
+  private readonly dataPath = join(__dirname, '../../data/tasks.json');
 
   /**
    * Check if the tasks data file is accessible and valid

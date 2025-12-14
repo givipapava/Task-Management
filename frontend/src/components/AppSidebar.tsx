@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import {
   DashboardOutlined,
@@ -28,22 +29,22 @@ export const AppSidebar: React.FC<AppSidebarProps> = React.memo(({
     {
       key: 'dashboard',
       icon: <DashboardOutlined />,
-      label: 'Dashboard',
+      label: <Link to="/">Dashboard</Link>,
     },
     {
       key: 'list',
       icon: <UnorderedListOutlined />,
-      label: 'Task List',
+      label: <Link to="/list">Task List</Link>,
     },
     {
       key: 'kanban',
       icon: <AppstoreOutlined />,
-      label: 'Kanban Board',
+      label: <Link to="/kanban">Kanban Board</Link>,
     },
     {
       key: 'analytics',
       icon: <BarChartOutlined />,
-      label: 'Analytics',
+      label: <Link to="/analytics">Analytics</Link>,
     },
   ];
 

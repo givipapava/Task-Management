@@ -41,11 +41,11 @@ export class HealthController {
     return this.health.check([
       // Check if data file is accessible and valid
       () => this.fileSystem.isHealthy('tasks_file'),
-      // Check if disk storage has at least 50% free space
+      // Check if disk storage has at least 10% free space (90% used is threshold)
       () =>
         this.disk.checkStorage('storage', {
           path: '/',
-          thresholdPercent: 0.5,
+          thresholdPercent: 0.9,
         }),
       // Check if memory heap doesn't exceed 150MB
       () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),

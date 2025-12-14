@@ -1,11 +1,11 @@
 import React, { useMemo, useCallback, useState, useEffect } from 'react';
-import { Card, Tag, Typography, Space, Button, Dropdown, Empty, notification } from 'antd';
+import { Card, Tag, Typography, Space, Button, Dropdown, Empty, App } from 'antd';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { DndContext, DragOverlay, pointerWithin, KeyboardSensor, PointerSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { EditOutlined, DeleteOutlined, MoreOutlined, CalendarOutlined, FlagOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, MoreOutlined, CalendarOutlined, FlagOutlined } from '@ant-design/icons';
 import { TaskStatus, TaskPriority } from '../types/task';
 import type { Task } from '../types/task';
 import { getPriorityColor, getCategoryColor } from '../utils/taskHelpers';
@@ -17,7 +17,7 @@ interface KanbanBoardProps {
   tasks: Task[];
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
-  onStatusChange: (taskId: string, newStatus: TaskStatus) => void;
+  onStatusChange: (taskId: string, newStatus: TaskStatus, silent?: boolean) => void;
 }
 
 interface TaskCardProps {
@@ -126,6 +126,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
   onDelete,
   onStatusChange,
 }) => {
+  const { message } = App.useApp();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [justDroppedId, setJustDroppedId] = useState<string | null>(null);
   const [lastDroppedColumn, setLastDroppedColumn] = useState<string | null>(null);
@@ -200,37 +201,32 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
       const newStatus = columnToStatus[over.id as string];
 
       if (newStatus && activeTask.status !== newStatus) {
-        // Trigger the status change
-        onStatusChange(activeTask.id, newStatus);
+        const oldStatus = activeTask.status;
 
-        // Set animation state
-        setJustDroppedId(activeTask.id);
-        setLastDroppedColumn(over.id as string);
-
-        // Show success notification
+        // Show success toast notification (before status change for better UX)
         const statusLabels = {
           [TaskStatus.PENDING]: 'To Do',
           [TaskStatus.IN_PROGRESS]: 'In Progress',
           [TaskStatus.COMPLETED]: 'Completed',
         };
 
-        const columnColors = {
-          [TaskStatus.PENDING]: '#1890ff',
-          [TaskStatus.IN_PROGRESS]: '#faad14',
-          [TaskStatus.COMPLETED]: '#52c41a',
+        const statusIcons = {
+          [TaskStatus.PENDING]: '📋',
+          [TaskStatus.IN_PROGRESS]: '⏳',
+          [TaskStatus.COMPLETED]: '✅',
         };
 
-        notification.success({
-          message: 'Task Moved',
-          description: (
-            <span>
-              <strong>{activeTask.title}</strong> moved to <strong>{statusLabels[newStatus]}</strong>
-            </span>
-          ),
-          icon: <CheckCircleOutlined style={{ color: columnColors[newStatus] }} />,
-          duration: 2,
-          placement: 'topRight',
+        message.success({
+          content: `${statusIcons[oldStatus]} ➜ ${statusIcons[newStatus]} Moved from ${statusLabels[oldStatus]} to ${statusLabels[newStatus]}`,
+          duration: 2.5,
         });
+
+        // Trigger the status change (silent mode - no notification from useTasks)
+        onStatusChange(activeTask.id, newStatus, true);
+
+        // Set animation state
+        setJustDroppedId(activeTask.id);
+        setLastDroppedColumn(over.id as string);
 
         // Clear animation after 600ms
         setTimeout(() => {
@@ -240,7 +236,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
 
       setActiveId(null);
     },
-    [taskMap, columnToStatus, onStatusChange]
+    [taskMap, columnToStatus, onStatusChange, message]
   );
 
   const handleDragCancel = useCallback((): void => {

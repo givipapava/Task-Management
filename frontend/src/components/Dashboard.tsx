@@ -186,101 +186,161 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick }) =>
       <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
         <Col xs={24} md={8}>
           <Card
-            title={
-              <Space>
-                <TrophyOutlined style={{ color: '#faad14', fontSize: 18 }} />
-                <Text strong style={{ fontSize: 16 }}>Productivity</Text>
-              </Space>
-            }
+            hoverable={false}
             variant="borderless"
-            style={{ height: '100%', boxShadow: SHADOWS.SM }}
+            style={{
+              height: '100%',
+              boxShadow: SHADOWS.SM,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              overflow: 'hidden',
+            }}
+            styles={{ body: { padding: 0 } }}
           >
-            <div style={{ textAlign: 'center', padding: '16px 0' }}>
-              <Progress
-                type="circle"
-                percent={stats.completionRate}
-                strokeColor={{
-                  '0%': '#667eea',
-                  '50%': '#11998e',
-                  '100%': '#38ef7d',
-                }}
-                strokeWidth={8}
-                format={(percent) => (
-                  <div>
-                    <div style={{ fontSize: 36, fontWeight: 700, color: '#1890ff' }}>{percent}%</div>
-                    <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>Complete</div>
-                  </div>
-                )}
-                size={180}
-              />
-              <Divider style={{ margin: '20px 0' }} />
-              <Space direction="vertical" size={8} style={{ width: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text type="secondary">Tasks Done</Text>
-                  <Text strong style={{ fontSize: 16 }}>{stats.completed} / {stats.total}</Text>
+            <div style={{ padding: '20px 24px', position: 'relative' }}>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '150px',
+                height: '150px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '50%',
+                transform: 'translate(40%, -40%)',
+              }} />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100px',
+                height: '100px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                borderRadius: '50%',
+                transform: 'translate(-30%, 30%)',
+              }} />
+
+              <Space style={{ marginBottom: 20, position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  padding: '8px 10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <TrophyOutlined style={{ color: '#fff', fontSize: 20 }} />
                 </div>
-                <div>
+                <Text strong style={{ fontSize: 17, color: '#fff' }}>Productivity Score</Text>
+              </Space>
+
+              <div style={{ textAlign: 'center', padding: '20px 0', position: 'relative', zIndex: 1 }}>
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                  <Progress
+                    type="circle"
+                    percent={stats.completionRate}
+                    strokeColor={{
+                      '0%': '#ffd89b',
+                      '100%': '#19547b',
+                    }}
+                    trailColor="rgba(255, 255, 255, 0.2)"
+                    strokeWidth={12}
+                    format={(percent) => (
+                      <div>
+                        <div style={{ fontSize: 42, fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+                          {percent}
+                        </div>
+                        <div style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.9)', marginTop: 4, fontWeight: 600 }}>
+                          Score
+                        </div>
+                      </div>
+                    )}
+                    size={160}
+                  />
+                </div>
+
+                <div style={{
+                  marginTop: 24,
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  backdropFilter: 'blur(10px)',
+                }}>
+                  <Row gutter={[16, 12]}>
+                    <Col span={12}>
+                      <div style={{ textAlign: 'left' }}>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: 12, display: 'block' }}>
+                          Completed
+                        </Text>
+                        <Text style={{ color: '#fff', fontSize: 20, fontWeight: 700, display: 'block' }}>
+                          {stats.completed}
+                        </Text>
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <div style={{ textAlign: 'right' }}>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: 12, display: 'block' }}>
+                          Total
+                        </Text>
+                        <Text style={{ color: '#fff', fontSize: 20, fontWeight: 700, display: 'block' }}>
+                          {stats.total}
+                        </Text>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+
+                <div style={{ marginTop: 16 }}>
                   {stats.productivity === 'up' && (
-                    <Tooltip title="Your completion rate is excellent!">
-                      <Tag
-                        icon={<ArrowUpOutlined />}
-                        color="success"
-                        className="productivity-tag"
-                        style={{
-                          width: '100%',
-                          textAlign: 'center',
-                          padding: '8px 12px',
-                          cursor: 'pointer',
-                          fontSize: 13,
-                          fontWeight: 500,
-                          transition: `all ${ANIMATION.NORMAL}ms ${EASING.SPRING}`,
-                        }}
-                      >
-                        Great Progress! Keep it up 🚀
-                      </Tag>
-                    </Tooltip>
+                    <div style={{
+                      background: 'rgba(82, 196, 26, 0.2)',
+                      border: '2px solid rgba(82, 196, 26, 0.5)',
+                      borderRadius: '10px',
+                      padding: '10px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}>
+                      <ArrowUpOutlined style={{ color: '#95de64', fontSize: 16 }} />
+                      <Text style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>
+                        Excellent Progress! 🚀
+                      </Text>
+                    </div>
                   )}
                   {stats.productivity === 'down' && (
-                    <Tooltip title="Focus on completing pending tasks to boost productivity">
-                      <Tag
-                        icon={<ArrowDownOutlined />}
-                        color="warning"
-                        className="productivity-tag"
-                        style={{
-                          width: '100%',
-                          textAlign: 'center',
-                          padding: '8px 12px',
-                          cursor: 'pointer',
-                          fontSize: 13,
-                          fontWeight: 500,
-                          transition: `all ${ANIMATION.NORMAL}ms ${EASING.SPRING}`,
-                        }}
-                      >
-                        Let's focus on pending tasks 💪
-                      </Tag>
-                    </Tooltip>
+                    <div style={{
+                      background: 'rgba(250, 173, 20, 0.2)',
+                      border: '2px solid rgba(250, 173, 20, 0.5)',
+                      borderRadius: '10px',
+                      padding: '10px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}>
+                      <ArrowDownOutlined style={{ color: '#ffc53d', fontSize: 16 }} />
+                      <Text style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>
+                        Focus Mode 💪
+                      </Text>
+                    </div>
                   )}
                   {stats.productivity === 'neutral' && (
-                    <Tooltip title="You're making steady progress!">
-                      <Tag
-                        color="processing"
-                        className="productivity-tag"
-                        style={{
-                          width: '100%',
-                          textAlign: 'center',
-                          padding: '8px 12px',
-                          cursor: 'pointer',
-                          fontSize: 13,
-                          fontWeight: 500,
-                          transition: `all ${ANIMATION.NORMAL}ms ${EASING.SPRING}`,
-                        }}
-                      >
-                        Good pace! Stay consistent ⚡
-                      </Tag>
-                    </Tooltip>
+                    <div style={{
+                      background: 'rgba(24, 144, 255, 0.2)',
+                      border: '2px solid rgba(24, 144, 255, 0.5)',
+                      borderRadius: '10px',
+                      padding: '10px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}>
+                      <Text style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>
+                        Steady Progress ⚡
+                      </Text>
+                    </div>
                   )}
                 </div>
-              </Space>
+              </div>
             </div>
           </Card>
         </Col>
@@ -294,6 +354,7 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick }) =>
               </Space>
             }
             variant="borderless"
+            hoverable={false}
             extra={<Badge count={stats.highPriority} style={{ backgroundColor: '#ff4d4f' }} />}
             style={{ height: '100%', boxShadow: SHADOWS.SM }}
           >
@@ -368,6 +429,7 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick }) =>
               </Space>
             }
             variant="borderless"
+            hoverable={false}
             extra={<Badge count={stats.dueSoon.length} style={{ backgroundColor: '#1890ff' }} />}
             style={{ height: '100%', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
           >
@@ -464,14 +526,23 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick }) =>
                   <List.Item>
                     <Card
                       size="small"
-                      hoverable
+                      hoverable={false}
                       onClick={() => onTaskClick?.(task)}
                       style={{
                         borderLeft: `4px solid ${getPriorityColor(task.priority)}`,
                         height: '100%',
                         transition: 'all 0.3s',
+                        cursor: 'pointer',
                       }}
                       styles={{ body: { padding: 12 } }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                     >
                       <Paragraph
                         ellipsis={{ rows: 2 }}
@@ -512,11 +583,15 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick }) =>
         }
 
         .task-list-item:hover {
-          background-color: #fafafa;
+          background-color: rgba(0, 0, 0, 0.02);
           margin: 0 -12px;
           padding-left: 12px !important;
           padding-right: 12px !important;
           border-radius: 8px;
+        }
+
+        [data-theme='dark'] .task-list-item:hover {
+          background-color: rgba(255, 255, 255, 0.05);
         }
 
         .productivity-tag:hover {

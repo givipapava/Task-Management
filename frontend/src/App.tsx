@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { ConfigProvider, Layout, FloatButton, theme } from 'antd';
+import { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { ConfigProvider, Layout, FloatButton, theme, App as AntApp } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -18,10 +19,31 @@ import type { CreateTaskDto } from './types/task';
 
 dayjs.extend(relativeTime);
 
-function App() {
-  const [darkMode, setDarkMode] = useState(false);
+interface AppContentProps {
+  darkMode: boolean;
+  onToggleDarkMode: (mode: boolean) => void;
+}
+
+function AppContent({ darkMode, onToggleDarkMode }: AppContentProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine view mode from URL
+  const getViewModeFromPath = (pathname: string): ViewMode => {
+    if (pathname === '/list') return 'list';
+    if (pathname === '/kanban') return 'kanban';
+    if (pathname === '/analytics') return 'analytics';
+    return 'dashboard';
+  };
+
+  const viewMode = getViewModeFromPath(location.pathname);
+
+  // Handle view mode change and update URL
+  const handleViewModeChange = (mode: ViewMode) => {
+    const path = mode === 'dashboard' ? '/' : `/${mode}`;
+    navigate(path);
+  };
 
   const {
     tasks,
@@ -78,7 +100,72 @@ function App() {
     }
   };
 
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      <AppSidebar
+        collapsed={collapsed}
+        viewMode={viewMode}
+        onViewModeChange={handleViewModeChange}
+        onCollapse={setCollapsed}
+      />
+
+      <Layout>
+        <AppHeader
+          darkMode={darkMode}
+          onToggleDarkMode={onToggleDarkMode}
+          onCreateTask={openCreateModal}
+          onExport={handleExport}
+          onImport={handleImport}
+        />
+
+        <MainContent
+          viewMode={viewMode}
+          loading={loading}
+          tasks={tasks}
+          filteredTasks={filteredTasks}
+          taskCounts={taskCounts}
+          searchQuery={searchQuery}
+          filterStatus={filterStatus}
+          advancedFilters={advancedFilters}
+          onSearchChange={setSearchQuery}
+          onFilterChange={setFilterStatus}
+          onAdvancedFilterChange={setAdvancedFilters}
+          onEditTask={handleEditTask}
+          onDeleteTask={handleDeleteTask}
+          onToggleStatus={toggleTaskStatus}
+          onStatusChange={changeTaskStatus}
+        />
+      </Layout>
+
+      <FloatButton
+        icon={<PlusOutlined />}
+        type="primary"
+        style={{ right: 24, bottom: 24 }}
+        onClick={openCreateModal}
+        tooltip="Create New Task"
+      />
+
+      <TaskModal
+        open={showTaskModal}
+        task={editingTask}
+        onSubmit={handleCreateOrUpdateTask}
+        onCancel={handleCancelEdit}
+        loading={submitting}
+      />
+
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        taskTitle={taskToDelete?.title || ''}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+    </Layout>
+  );
+}
+
+function App() {
   const { defaultAlgorithm, darkAlgorithm } = theme;
+  const [darkMode, setDarkMode] = useState(false);
 
   return (
     <ErrorBoundary>
@@ -87,65 +174,15 @@ function App() {
           algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
         }}
       >
-        <Layout style={{ minHeight: '100vh' }}>
-          <AppSidebar
-            collapsed={collapsed}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-            onCollapse={setCollapsed}
-          />
-
-          <Layout>
-            <AppHeader
-              darkMode={darkMode}
-              onToggleDarkMode={setDarkMode}
-              onCreateTask={openCreateModal}
-              onExport={handleExport}
-              onImport={handleImport}
-            />
-
-            <MainContent
-              viewMode={viewMode}
-              loading={loading}
-              tasks={tasks}
-              filteredTasks={filteredTasks}
-              taskCounts={taskCounts}
-              searchQuery={searchQuery}
-              filterStatus={filterStatus}
-              advancedFilters={advancedFilters}
-              onSearchChange={setSearchQuery}
-              onFilterChange={setFilterStatus}
-              onAdvancedFilterChange={setAdvancedFilters}
-              onEditTask={handleEditTask}
-              onDeleteTask={handleDeleteTask}
-              onToggleStatus={toggleTaskStatus}
-              onStatusChange={changeTaskStatus}
-            />
-          </Layout>
-
-          <FloatButton
-            icon={<PlusOutlined />}
-            type="primary"
-            style={{ right: 24, bottom: 24 }}
-            onClick={openCreateModal}
-            tooltip="Create New Task"
-          />
-
-          <TaskModal
-            open={showTaskModal}
-            task={editingTask}
-            onSubmit={handleCreateOrUpdateTask}
-            onCancel={handleCancelEdit}
-            loading={submitting}
-          />
-
-          <DeleteConfirmModal
-            open={showDeleteModal}
-            taskTitle={taskToDelete?.title || ''}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-          />
-        </Layout>
+        <AntApp message={{ top: 80, maxCount: 3 }}>
+          <Routes>
+            <Route path="/" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
+            <Route path="/list" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
+            <Route path="/kanban" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
+            <Route path="/analytics" element={<AppContent darkMode={darkMode} onToggleDarkMode={setDarkMode} />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AntApp>
       </ConfigProvider>
     </ErrorBoundary>
   );
