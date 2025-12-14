@@ -14,6 +14,9 @@ import {
   ThunderboltOutlined,
   BulbOutlined,
   FolderOutlined,
+  PlusCircleOutlined,
+  WarningOutlined,
+  PercentageOutlined,
 } from '@ant-design/icons';
 import { TaskPriority, TaskStatus } from '../types/task';
 import type { Task } from '../types/task';
@@ -978,62 +981,147 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
       <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
         <Col xs={24} sm={12}>
           <Card
-            hoverable={false}
+            hoverable
             style={{
-              borderRadius: '16px',
-              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
-              boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.08)',
-              background: darkMode ? 'rgba(255, 255, 255, 0.04)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+              borderRadius: '20px',
+              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e8f4fd',
+              boxShadow: darkMode ? '0 8px 24px rgba(0,0,0,0.4)' : '0 2px 8px rgba(79, 172, 254, 0.08)',
+              background: darkMode
+                ? 'rgba(255, 255, 255, 0.04)'
+                : 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)',
               height: '100%',
+              overflow: 'hidden',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
-            styles={{ body: { padding: 24 } }}
+            styles={{ body: { padding: 28 } }}
           >
-            <Space direction="vertical" size={16} style={{ width: '100%' }}>
-              <Space>
+            <Space direction="vertical" size={20} style={{ width: '100%' }}>
+              <Space align="center" size={12}>
                 <div style={{
-                  background: darkMode ? 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' : 'rgba(255, 255, 255, 0.25)',
-                  borderRadius: '12px',
-                  padding: '10px 12px',
+                  background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                  borderRadius: '14px',
+                  width: 56,
+                  height: 56,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  boxShadow: '0 8px 16px rgba(79, 172, 254, 0.3)',
                 }}>
-                  <RocketOutlined style={{ color: '#fff', fontSize: 22 }} />
+                  <RocketOutlined style={{ color: '#fff', fontSize: 26 }} />
                 </div>
-                <Text strong style={{ fontSize: 17, color: darkMode ? undefined : '#fff' }}>
-                  This Week's Activity
-                </Text>
+                <div>
+                  <Text strong style={{ fontSize: 18, display: 'block', marginBottom: 4 }}>
+                    This Week's Activity
+                  </Text>
+                  <Text type="secondary" style={{ fontSize: 13 }}>
+                    Track your progress
+                  </Text>
+                </div>
               </Space>
 
-              <Row gutter={16}>
+              <Row gutter={12}>
                 <Col span={12}>
                   <div style={{
-                    background: darkMode ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255, 255, 255, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
+                    background: darkMode
+                      ? 'linear-gradient(135deg, rgba(79, 172, 254, 0.2) 0%, rgba(0, 242, 254, 0.1) 100%)'
+                      : 'linear-gradient(135deg, #4facfe15 0%, #00f2fe08 100%)',
+                    borderRadius: '14px',
+                    padding: '20px 16px',
                     textAlign: 'center',
-                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                  }}>
-                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 255, 255, 0.9)', fontSize: 12, display: 'block', marginBottom: 8 }}>
+                    border: darkMode ? '1px solid rgba(79, 172, 254, 0.2)' : '1px solid #e0f3ff',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = darkMode
+                      ? '0 8px 20px rgba(79, 172, 254, 0.3)'
+                      : '0 4px 12px rgba(79, 172, 254, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                  >
+                    <PlusCircleOutlined style={{
+                      fontSize: 20,
+                      color: '#4facfe',
+                      marginBottom: 8,
+                      display: 'block'
+                    }} />
+                    <Text style={{
+                      color: darkMode ? 'rgba(255, 255, 255, 0.5)' : '#8c8c8c',
+                      fontSize: 12,
+                      display: 'block',
+                      marginBottom: 8,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      fontWeight: 500
+                    }}>
                       Created
                     </Text>
-                    <Title level={2} style={{ margin: 0, color: darkMode ? undefined : '#fff', fontSize: 36 }}>
+                    <Title level={1} style={{
+                      margin: 0,
+                      fontSize: 40,
+                      fontWeight: 700,
+                      background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}>
                       {stats.createdThisWeek}
                     </Title>
                   </div>
                 </Col>
                 <Col span={12}>
                   <div style={{
-                    background: darkMode ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255, 255, 255, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
+                    background: darkMode
+                      ? 'linear-gradient(135deg, rgba(17, 153, 142, 0.2) 0%, rgba(56, 239, 125, 0.1) 100%)'
+                      : 'linear-gradient(135deg, #11998e15 0%, #38ef7d08 100%)',
+                    borderRadius: '14px',
+                    padding: '20px 16px',
                     textAlign: 'center',
-                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                  }}>
-                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 255, 255, 0.9)', fontSize: 12, display: 'block', marginBottom: 8 }}>
-                      Completed
+                    border: darkMode ? '1px solid rgba(56, 239, 125, 0.2)' : '1px solid #d9f7e8',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = darkMode
+                      ? '0 8px 20px rgba(56, 239, 125, 0.3)'
+                      : '0 4px 12px rgba(56, 239, 125, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                  >
+                    <CheckCircleOutlined style={{
+                      fontSize: 20,
+                      color: '#38ef7d',
+                      marginBottom: 8,
+                      display: 'block'
+                    }} />
+                    <Text style={{
+                      color: darkMode ? 'rgba(255, 255, 255, 0.5)' : '#8c8c8c',
+                      fontSize: 12,
+                      display: 'block',
+                      marginBottom: 8,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      fontWeight: 500
+                    }}>
+                      Done
                     </Text>
-                    <Title level={2} style={{ margin: 0, color: darkMode ? undefined : '#fff', fontSize: 36 }}>
+                    <Title level={1} style={{
+                      margin: 0,
+                      fontSize: 40,
+                      fontWeight: 700,
+                      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}>
                       {stats.completedThisWeek}
                     </Title>
                   </div>
@@ -1041,27 +1129,34 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
               </Row>
 
               <div style={{
-                background: darkMode ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255, 255, 255, 0.15)',
-                borderRadius: '12px',
-                padding: '12px 16px',
+                background: darkMode
+                  ? 'rgba(79, 172, 254, 0.1)'
+                  : '#f0f9ff',
+                borderRadius: '14px',
+                padding: '14px 18px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                border: darkMode ? '1px solid rgba(79, 172, 254, 0.15)' : '1px solid #d6f0ff',
               }}>
-                <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13, fontWeight: 500 }}>
-                  Week Performance
-                </Text>
                 <Space size={8}>
-                  {stats.completedThisWeek >= stats.createdThisWeek ? (
-                    <ArrowUpOutlined style={{ color: '#95de64', fontSize: 16 }} />
-                  ) : (
-                    <ArrowDownOutlined style={{ color: '#ffc53d', fontSize: 16 }} />
-                  )}
-                  <Text style={{ color: darkMode ? undefined : '#fff', fontSize: 14, fontWeight: 600 }}>
-                    {stats.completedThisWeek >= stats.createdThisWeek ? 'On Track' : 'Keep Going'}
+                  <TrophyOutlined style={{ color: '#4facfe', fontSize: 18 }} />
+                  <Text style={{ fontSize: 14, fontWeight: 500 }}>
+                    Week Performance
                   </Text>
                 </Space>
+                <Tag
+                  icon={stats.completedThisWeek >= stats.createdThisWeek ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                  color={stats.completedThisWeek >= stats.createdThisWeek ? 'success' : 'warning'}
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    padding: '4px 14px',
+                    borderRadius: '8px'
+                  }}
+                >
+                  {stats.completedThisWeek >= stats.createdThisWeek ? 'On Track' : 'Keep Going'}
+                </Tag>
               </div>
             </Space>
           </Card>
@@ -1069,100 +1164,203 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
 
         <Col xs={24} sm={12}>
           <Card
-            hoverable={false}
+            hoverable
             style={{
-              borderRadius: '16px',
-              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
-              boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.08)',
-              background: darkMode ? 'rgba(255, 255, 255, 0.04)' : 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
+              borderRadius: '20px',
+              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #fff4e6',
+              boxShadow: darkMode ? '0 8px 24px rgba(0,0,0,0.4)' : '0 2px 8px rgba(254, 202, 87, 0.08)',
+              background: darkMode
+                ? 'rgba(255, 255, 255, 0.04)'
+                : 'linear-gradient(135deg, #ffffff 0%, #fff9f0 100%)',
               height: '100%',
+              overflow: 'hidden',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
             styles={{ body: { padding: 24 } }}
           >
-            <Space direction="vertical" size={16} style={{ width: '100%' }}>
-              <Space>
+            <Space direction="vertical" size={20} style={{ width: '100%' }}>
+              <Space align="center" size={12}>
                 <div style={{
-                  background: darkMode ? 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)' : 'rgba(255, 255, 255, 0.25)',
-                  borderRadius: '12px',
-                  padding: '10px 12px',
+                  background: 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
+                  borderRadius: '14px',
+                  width: 56,
+                  height: 56,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  boxShadow: '0 8px 16px rgba(254, 202, 87, 0.3)',
                 }}>
-                  <StarOutlined style={{ color: '#fff', fontSize: 22 }} />
+                  <StarOutlined style={{ color: '#fff', fontSize: 26 }} />
                 </div>
-                <Text strong style={{ fontSize: 17, color: darkMode ? undefined : '#fff' }}>
-                  Quick Stats
-                </Text>
+                <div>
+                  <Text strong style={{ fontSize: 18, display: 'block' }}>Quick Stats</Text>
+                  <Text type="secondary" style={{ fontSize: 13 }}>Key metrics at a glance</Text>
+                </div>
               </Space>
 
               <Space direction="vertical" size={12} style={{ width: '100%' }}>
-                <div style={{
-                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '10px',
-                  padding: '12px 16px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                }}>
-                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
-                    Due Today
-                  </Text>
-                  <Tag color="error" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                <div
+                  style={{
+                    background: darkMode
+                      ? 'linear-gradient(135deg, rgba(255, 77, 79, 0.2) 0%, rgba(255, 77, 79, 0.1) 100%)'
+                      : 'linear-gradient(135deg, #ff4d4f15 0%, #ff4d4f08 100%)',
+                    borderRadius: '14px',
+                    padding: '16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(255, 77, 79, 0.1)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 79, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <Space align="center" size={10}>
+                    <ClockCircleOutlined style={{ fontSize: 18, color: '#ff4d4f' }} />
+                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)', fontSize: 14, fontWeight: 500 }}>
+                      Due Today
+                    </Text>
+                  </Space>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontSize: 24,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                  }}>
                     {stats.dueToday}
-                  </Tag>
+                  </div>
                 </div>
 
-                <div style={{
-                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '10px',
-                  padding: '12px 16px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                }}>
-                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
-                    High Priority
-                  </Text>
-                  <Tag color="red" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                <div
+                  style={{
+                    background: darkMode
+                      ? 'linear-gradient(135deg, rgba(250, 84, 28, 0.2) 0%, rgba(250, 84, 28, 0.1) 100%)'
+                      : 'linear-gradient(135deg, #fa541c15 0%, #fa541c08 100%)',
+                    borderRadius: '14px',
+                    padding: '16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(250, 84, 28, 0.1)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(250, 84, 28, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <Space align="center" size={10}>
+                    <FireOutlined style={{ fontSize: 18, color: '#fa541c' }} />
+                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)', fontSize: 14, fontWeight: 500 }}>
+                      High Priority
+                    </Text>
+                  </Space>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #fa541c 0%, #ff7a45 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontSize: 24,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                  }}>
                     {stats.highPriority}
-                  </Tag>
+                  </div>
                 </div>
 
-                <div style={{
-                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '10px',
-                  padding: '12px 16px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                }}>
-                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
-                    Overdue
-                  </Text>
-                  <Tag color="volcano" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                <div
+                  style={{
+                    background: darkMode
+                      ? 'linear-gradient(135deg, rgba(250, 140, 22, 0.2) 0%, rgba(250, 140, 22, 0.1) 100%)'
+                      : 'linear-gradient(135deg, #fa8c1615 0%, #fa8c1608 100%)',
+                    borderRadius: '14px',
+                    padding: '16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(250, 140, 22, 0.1)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(250, 140, 22, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <Space align="center" size={10}>
+                    <WarningOutlined style={{ fontSize: 18, color: '#fa8c16' }} />
+                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)', fontSize: 14, fontWeight: 500 }}>
+                      Overdue
+                    </Text>
+                  </Space>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #fa8c16 0%, #ffa940 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontSize: 24,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                  }}>
                     {stats.overdue}
-                  </Tag>
+                  </div>
                 </div>
 
-                <div style={{
-                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '10px',
-                  padding: '12px 16px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                }}>
-                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
-                    Completion Rate
-                  </Text>
-                  <Tag color="success" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                <div
+                  style={{
+                    background: darkMode
+                      ? 'linear-gradient(135deg, rgba(82, 196, 26, 0.2) 0%, rgba(82, 196, 26, 0.1) 100%)'
+                      : 'linear-gradient(135deg, #52c41a15 0%, #52c41a08 100%)',
+                    borderRadius: '14px',
+                    padding: '16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(82, 196, 26, 0.1)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(82, 196, 26, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <Space align="center" size={10}>
+                    <PercentageOutlined style={{ fontSize: 18, color: '#52c41a' }} />
+                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)', fontSize: 14, fontWeight: 500 }}>
+                      Completion Rate
+                    </Text>
+                  </Space>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #52c41a 0%, #73d13d 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontSize: 24,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                  }}>
                     {stats.completionRate}%
-                  </Tag>
+                  </div>
                 </div>
               </Space>
             </Space>
