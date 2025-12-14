@@ -63,32 +63,24 @@ Then open **[http://localhost:5173](http://localhost:5173)** in your browser!
 ![Dashboard Dark Mode](./images/dashboard-dark.png)
 *Beautiful dark theme with gradient effects and modern styling*
 
-</div>
+![Dashboard Light Mode](./images/task-list-dark.png)
+*Beautiful light theme with gradient effects and modern styling*
 
----
-
-### Task List View
-
-<div align="center">
-
-#### Dark Mode
-![Task List Dark Mode](./images/task-list-dark.png)
-*Task list in dark mode with advanced filtering capabilities*
 
 </div>
 
 ---
 
-### Kanban Board View
+### Board View
 
 <div align="center">
 
 #### Light Mode
-![Kanban Board Light Mode](./images/kanban-board-light-mode.png)
-*Drag-and-drop Kanban board with statistics, quick filters, and enhanced column insights*
+![ Board Light Mode](./images/kanban-board-light-mode.png)
+*Drag-and-drop  board with statistics, quick filters, and enhanced column insights*
 
 #### Dark Mode
-![Kanban Board Dark Mode](./images/kanban-board-dark-mode.png)
+![ Board Dark Mode](./images/kanban-board-dark-mode.png)
 *Kanban board with beautiful gradients and hover effects in dark mode*
 
 </div>
