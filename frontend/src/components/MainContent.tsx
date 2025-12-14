@@ -121,7 +121,6 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
                 onEdit={onEditTask}
                 onDelete={onDeleteTask}
                 onToggleStatus={onToggleStatus}
-                onStatusChange={onStatusChange}
               />
             </>
           )}

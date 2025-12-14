@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Tag, Button, Space, Checkbox, Typography, Select } from 'antd';
+import { Table, Tag, Button, Space, Checkbox, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -8,7 +8,6 @@ import type { Task } from '../types/task';
 import { getPriorityColor, getCategoryColor } from '../utils/taskHelpers';
 
 const { Text } = Typography;
-const { Option } = Select;
 
 interface TaskListProps {
   tasks: Task[];
@@ -16,7 +15,6 @@ interface TaskListProps {
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onToggleStatus: (task: Task) => void;
-  onStatusChange: (taskId: string, newStatus: TaskStatus) => void;
 }
 
 const TaskListComponent: React.FC<TaskListProps> = ({
@@ -25,7 +23,6 @@ const TaskListComponent: React.FC<TaskListProps> = ({
   onEdit,
   onDelete,
   onToggleStatus,
-  onStatusChange,
 }) => {
   const getStatusColor = (status: TaskStatus): string => {
     switch (status) {
@@ -118,29 +115,10 @@ const TaskListComponent: React.FC<TaskListProps> = ({
       key: 'statusTag',
       width: 150,
       align: 'center',
-      render: (status: TaskStatus, record: Task) => (
-        <Select
-          value={status}
-          onChange={(newStatus) => onStatusChange(record.id, newStatus)}
-          style={{ width: '100%' }}
-          size="small"
-        >
-          <Option value={TaskStatus.PENDING}>
-            <Tag color={getStatusColor(TaskStatus.PENDING)} style={{ margin: 0 }}>
-              {formatStatusText(TaskStatus.PENDING)}
-            </Tag>
-          </Option>
-          <Option value={TaskStatus.IN_PROGRESS}>
-            <Tag color={getStatusColor(TaskStatus.IN_PROGRESS)} style={{ margin: 0 }}>
-              {formatStatusText(TaskStatus.IN_PROGRESS)}
-            </Tag>
-          </Option>
-          <Option value={TaskStatus.COMPLETED}>
-            <Tag color={getStatusColor(TaskStatus.COMPLETED)} style={{ margin: 0 }}>
-              {formatStatusText(TaskStatus.COMPLETED)}
-            </Tag>
-          </Option>
-        </Select>
+      render: (status: TaskStatus) => (
+        <Tag color={getStatusColor(status)}>
+          {formatStatusText(status)}
+        </Tag>
       ),
     },
     {

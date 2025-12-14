@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Space, Button, Switch, Avatar, Dropdown, Badge, Typography } from 'antd';
+import { Layout, Space, Button, Switch, Avatar, Dropdown, Typography } from 'antd';
 import {
   PlusOutlined,
   DownloadOutlined,
@@ -7,7 +7,6 @@ import {
   SettingOutlined,
   UserOutlined,
   LogoutOutlined,
-  BellOutlined,
   MoonOutlined,
   SunOutlined,
 } from '@ant-design/icons';
@@ -84,13 +83,6 @@ export const AppHeader: React.FC<AppHeaderProps> = React.memo(({
         >
           Import
         </Button>
-
-        <Badge count={0} showZero={false}>
-          <Button
-            type="text"
-            icon={<BellOutlined style={{ fontSize: 18 }} />}
-          />
-        </Badge>
 
         <Space>
           <SunOutlined style={{ fontSize: 16 }} />
