@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { NotFoundException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -12,11 +12,25 @@ jest.mock('fs', () => ({
     writeFile: jest.fn(),
     access: jest.fn(),
     mkdir: jest.fn(),
+    copyFile: jest.fn(),
+    rename: jest.fn(),
+    unlink: jest.fn(),
   },
 }));
 
 describe('TasksService', () => {
   let service: TasksService;
+
+  // Suppress logger output during tests
+  beforeAll(() => {
+    jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    jest.spyOn(Logger.prototype, 'log').mockImplementation();
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
   const mockTasks = [
     {
       id: '1',
@@ -235,6 +249,156 @@ describe('TasksService', () => {
       (fs.writeFile as jest.Mock).mockRejectedValue(new Error('Write failed'));
 
       await expect(service.create(createTaskDto)).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('pagination', () => {
+    const mockPaginationTasks = Array.from({ length: 25 }, (_, i) => ({
+      id: `${i + 1}`,
+      title: `Task ${i + 1}`,
+      description: `Description ${i + 1}`,
+      priority: TaskPriority.MEDIUM,
+      status: TaskStatus.PENDING,
+      category: TaskCategory.WORK,
+      createdAt: '2025-12-14T12:00:00.000Z',
+      updatedAt: '2025-12-14T12:00:00.000Z',
+    }));
+
+    it('should return all tasks when no pagination params provided', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      const result = await service.findAll();
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toHaveLength(25);
+    });
+
+    it('should return paginated tasks with page 1', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      const result = await service.findAll({ page: 1, pageSize: 10 });
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('meta');
+      expect((result as any).data).toHaveLength(10);
+      expect((result as any).meta).toEqual({
+        page: 1,
+        pageSize: 10,
+        total: 25,
+        totalPages: 3,
+        hasPreviousPage: false,
+        hasNextPage: true,
+      });
+    });
+
+    it('should return paginated tasks with page 2', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      const result = await service.findAll({ page: 2, pageSize: 10 });
+
+      expect((result as any).data).toHaveLength(10);
+      expect((result as any).meta).toEqual({
+        page: 2,
+        pageSize: 10,
+        total: 25,
+        totalPages: 3,
+        hasPreviousPage: true,
+        hasNextPage: true,
+      });
+    });
+
+    it('should return remaining tasks on last page', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      const result = await service.findAll({ page: 3, pageSize: 10 });
+
+      expect((result as any).data).toHaveLength(5);
+      expect((result as any).meta).toEqual({
+        page: 3,
+        pageSize: 10,
+        total: 25,
+        totalPages: 3,
+        hasPreviousPage: true,
+        hasNextPage: false,
+      });
+    });
+
+    it('should throw BadRequestException for page < 1', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      await expect(service.findAll({ page: 0, pageSize: 10 })).rejects.toThrow(
+        'Page number must be greater than 0',
+      );
+    });
+
+    it('should throw BadRequestException when page exceeds total pages', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      await expect(service.findAll({ page: 10, pageSize: 10 })).rejects.toThrow(
+        'Page 10 does not exist. Total pages: 3',
+      );
+    });
+
+    it('should throw BadRequestException when requesting page > 1 for empty data', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: [] }),
+      );
+
+      await expect(service.findAll({ page: 2, pageSize: 10 })).rejects.toThrow(
+        'No data available',
+      );
+    });
+
+    it('should handle custom page size', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      const result = await service.findAll({ page: 1, pageSize: 5 });
+
+      expect((result as any).data).toHaveLength(5);
+      expect((result as any).meta.totalPages).toBe(5);
+    });
+
+    it('should use default page and pageSize when only one is provided', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: mockPaginationTasks }),
+      );
+
+      const result = await service.findAll({ page: 1 });
+
+      expect((result as any).data).toHaveLength(10);
+      expect((result as any).meta.pageSize).toBe(10);
+    });
+
+    it('should handle empty array on page 1', async () => {
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify({ tasks: [] }),
+      );
+
+      const result = await service.findAll({ page: 1, pageSize: 10 });
+
+      expect((result as any).data).toHaveLength(0);
+      expect((result as any).meta).toEqual({
+        page: 1,
+        pageSize: 10,
+        total: 0,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+      });
     });
   });
 });

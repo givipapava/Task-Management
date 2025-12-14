@@ -365,7 +365,7 @@ export const TaskStatistics: React.FC<TaskStatisticsProps> = ({ tasks }) => {
               title={<span style={{ color: '#fff', opacity: 0.9 }}>In Progress</span>}
               value={stats.inProgress}
               valueStyle={{ color: '#fff', fontSize: 32, fontWeight: 'bold' }}
-              prefix={<SyncOutlined spin style={{ color: '#fff' }} />}
+              prefix={<SyncOutlined style={{ color: '#fff' }} />}
             />
           </Card>
         </Col>

@@ -136,6 +136,7 @@ export const MainContent: React.FC<MainContentProps> = React.memo(({
           {viewMode === 'kanban' && (
             <KanbanBoard
               tasks={filteredTasks}
+              darkMode={darkMode}
               onEdit={onEditTask}
               onDelete={onDeleteTask}
               onStatusChange={onStatusChange}

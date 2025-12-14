@@ -13,6 +13,7 @@ import {
   StarOutlined,
   ThunderboltOutlined,
   BulbOutlined,
+  FolderOutlined,
 } from '@ant-design/icons';
 import { TaskPriority, TaskStatus } from '../types/task';
 import type { Task } from '../types/task';
@@ -67,6 +68,36 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
     const activeTasksCount = pending + inProgress;
     const productivity = completed > 0 && completed >= activeTasksCount ? 'up' : activeTasksCount > completed ? 'down' : 'neutral';
 
+    // Active tasks for today (in progress + due today)
+    const activeTodayTasks = tasks.filter(t =>
+      t.status === TaskStatus.IN_PROGRESS ||
+      (t.dueDate && dayjs(t.dueDate).isSame(dayjs(), 'day') && t.status !== TaskStatus.COMPLETED)
+    );
+
+    // Category breakdown
+    const categoryBreakdown = tasks.reduce((acc, task) => {
+      if (task.status !== TaskStatus.COMPLETED) {
+        const category = task.category || 'uncategorized';
+        acc[category] = (acc[category] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    const topCategories = Object.entries(categoryBreakdown)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5);
+
+    // Tasks created this week
+    const createdThisWeek = tasks.filter(t =>
+      dayjs(t.createdAt).isAfter(dayjs().startOf('week'))
+    ).length;
+
+    // Tasks completed this week
+    const completedThisWeek = tasks.filter(t =>
+      t.status === TaskStatus.COMPLETED &&
+      dayjs(t.updatedAt).isAfter(dayjs().startOf('week'))
+    ).length;
+
     return {
       total,
       completed,
@@ -79,6 +110,10 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
       recentlyCompleted,
       completionRate,
       productivity,
+      activeTodayTasks,
+      topCategories,
+      createdThisWeek,
+      completedThisWeek,
     };
   }, [tasks]);
 
@@ -748,6 +783,389 @@ const DashboardComponent: React.FC<DashboardProps> = ({ tasks, onTaskClick, dark
                 );
               }}
             />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+        <Col xs={24} lg={12}>
+          <Card
+            title={
+              <Space>
+                <div style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <ThunderboltOutlined style={{ color: '#fff', fontSize: 18 }} />
+                </div>
+                <Text strong style={{ fontSize: 17 }}>Active Today</Text>
+              </Space>
+            }
+            hoverable={false}
+            extra={
+              <Badge
+                count={stats.activeTodayTasks.length}
+                style={{
+                  backgroundColor: '#f5576c',
+                  boxShadow: '0 2px 8px rgba(245,87,108,0.3)',
+                }}
+              />
+            }
+            style={{
+              height: '100%',
+              borderRadius: '16px',
+              boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.08)',
+              background: darkMode ? 'rgba(255, 255, 255, 0.04)' : undefined,
+              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+            }}
+            className="modern-dashboard-card"
+          >
+            <List
+              size="small"
+              dataSource={stats.activeTodayTasks.slice(0, 4)}
+              locale={{
+                emptyText: (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={
+                      <Space direction="vertical" size={4}>
+                        <CheckCircleOutlined style={{ fontSize: 32, color: '#52c41a' }} />
+                        <Text type="secondary">No active tasks for today</Text>
+                      </Space>
+                    }
+                    style={{ padding: '32px 0' }}
+                  />
+                )
+              }}
+              renderItem={(task) => (
+                <List.Item
+                  style={{
+                    cursor: 'pointer',
+                    padding: '14px 0',
+                    transition: 'all 0.2s',
+                    borderRadius: '8px',
+                  }}
+                  onClick={() => onTaskClick?.(task)}
+                  className="task-list-item-modern"
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        style={{
+                          backgroundColor: getPriorityColor(task.priority),
+                          boxShadow: `0 2px 8px ${getPriorityColor(task.priority)}50`,
+                        }}
+                        size={40}
+                      >
+                        {task.status === TaskStatus.IN_PROGRESS ? '⚡' : '📅'}
+                      </Avatar>
+                    }
+                    title={
+                      <Tooltip title={task.title}>
+                        <Text strong style={{ fontSize: 14, display: 'block' }} ellipsis>
+                          {task.title}
+                        </Text>
+                      </Tooltip>
+                    }
+                    description={
+                      <Space size={6} wrap style={{ marginTop: 4 }}>
+                        <Tag
+                          color={task.status === TaskStatus.IN_PROGRESS ? 'processing' : 'default'}
+                          style={{
+                            fontSize: 11,
+                            borderRadius: '6px',
+                            border: 'none',
+                          }}
+                        >
+                          {task.status === TaskStatus.IN_PROGRESS ? 'In Progress' : 'Due Today'}
+                        </Tag>
+                        {task.category && (
+                          <Text type="secondary" style={{ fontSize: 11 }}>
+                            {getCategoryEmoji(task.category)} {task.category}
+                          </Text>
+                        )}
+                      </Space>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={12}>
+          <Card
+            title={
+              <Space>
+                <div style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <FolderOutlined style={{ color: '#fff', fontSize: 18 }} />
+                </div>
+                <Text strong style={{ fontSize: 17 }}>Top Categories</Text>
+              </Space>
+            }
+            hoverable={false}
+            style={{
+              height: '100%',
+              borderRadius: '16px',
+              boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.08)',
+              background: darkMode ? 'rgba(255, 255, 255, 0.04)' : undefined,
+              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+            }}
+            className="modern-dashboard-card"
+          >
+            {stats.topCategories.length === 0 ? (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={
+                  <Space direction="vertical" size={4}>
+                    <BulbOutlined style={{ fontSize: 32, color: '#1890ff' }} />
+                    <Text type="secondary">No categories yet</Text>
+                  </Space>
+                }
+                style={{ padding: '32px 0' }}
+              />
+            ) : (
+              <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                {stats.topCategories.map(([category, count]) => {
+                  const percentage = stats.total > 0 ? Math.round((count / (stats.total - stats.completed)) * 100) : 0;
+                  return (
+                    <div key={category} style={{ width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <Space size={8}>
+                          <span style={{ fontSize: 18 }}>{getCategoryEmoji(category)}</span>
+                          <Text strong style={{ fontSize: 14, textTransform: 'capitalize' }}>
+                            {category}
+                          </Text>
+                        </Space>
+                        <Space size={8}>
+                          <Text type="secondary" style={{ fontSize: 13 }}>
+                            {count} tasks
+                          </Text>
+                          <Tag color={getCategoryColor(category)} style={{ fontSize: 11, borderRadius: 6 }}>
+                            {percentage}%
+                          </Tag>
+                        </Space>
+                      </div>
+                      <Progress
+                        percent={percentage}
+                        strokeColor={getCategoryColor(category)}
+                        showInfo={false}
+                        strokeWidth={8}
+                        style={{ marginBottom: 4 }}
+                      />
+                    </div>
+                  );
+                })}
+              </Space>
+            )}
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+        <Col xs={24} sm={12}>
+          <Card
+            hoverable={false}
+            style={{
+              borderRadius: '16px',
+              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+              boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.08)',
+              background: darkMode ? 'rgba(255, 255, 255, 0.04)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+              height: '100%',
+            }}
+            styles={{ body: { padding: 24 } }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Space>
+                <div style={{
+                  background: darkMode ? 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' : 'rgba(255, 255, 255, 0.25)',
+                  borderRadius: '12px',
+                  padding: '10px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <RocketOutlined style={{ color: '#fff', fontSize: 22 }} />
+                </div>
+                <Text strong style={{ fontSize: 17, color: darkMode ? undefined : '#fff' }}>
+                  This Week's Activity
+                </Text>
+              </Space>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <div style={{
+                    background: darkMode ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                  }}>
+                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 255, 255, 0.9)', fontSize: 12, display: 'block', marginBottom: 8 }}>
+                      Created
+                    </Text>
+                    <Title level={2} style={{ margin: 0, color: darkMode ? undefined : '#fff', fontSize: 36 }}>
+                      {stats.createdThisWeek}
+                    </Title>
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <div style={{
+                    background: darkMode ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                  }}>
+                    <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 255, 255, 0.9)', fontSize: 12, display: 'block', marginBottom: 8 }}>
+                      Completed
+                    </Text>
+                    <Title level={2} style={{ margin: 0, color: darkMode ? undefined : '#fff', fontSize: 36 }}>
+                      {stats.completedThisWeek}
+                    </Title>
+                  </div>
+                </Col>
+              </Row>
+
+              <div style={{
+                background: darkMode ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                padding: '12px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+              }}>
+                <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13, fontWeight: 500 }}>
+                  Week Performance
+                </Text>
+                <Space size={8}>
+                  {stats.completedThisWeek >= stats.createdThisWeek ? (
+                    <ArrowUpOutlined style={{ color: '#95de64', fontSize: 16 }} />
+                  ) : (
+                    <ArrowDownOutlined style={{ color: '#ffc53d', fontSize: 16 }} />
+                  )}
+                  <Text style={{ color: darkMode ? undefined : '#fff', fontSize: 14, fontWeight: 600 }}>
+                    {stats.completedThisWeek >= stats.createdThisWeek ? 'On Track' : 'Keep Going'}
+                  </Text>
+                </Space>
+              </div>
+            </Space>
+          </Card>
+        </Col>
+
+        <Col xs={24} sm={12}>
+          <Card
+            hoverable={false}
+            style={{
+              borderRadius: '16px',
+              border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0,0,0,0.06)',
+              boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.08)',
+              background: darkMode ? 'rgba(255, 255, 255, 0.04)' : 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
+              height: '100%',
+            }}
+            styles={{ body: { padding: 24 } }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Space>
+                <div style={{
+                  background: darkMode ? 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)' : 'rgba(255, 255, 255, 0.25)',
+                  borderRadius: '12px',
+                  padding: '10px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <StarOutlined style={{ color: '#fff', fontSize: 22 }} />
+                </div>
+                <Text strong style={{ fontSize: 17, color: darkMode ? undefined : '#fff' }}>
+                  Quick Stats
+                </Text>
+              </Space>
+
+              <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                <div style={{
+                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                }}>
+                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
+                    Due Today
+                  </Text>
+                  <Tag color="error" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                    {stats.dueToday}
+                  </Tag>
+                </div>
+
+                <div style={{
+                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                }}>
+                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
+                    High Priority
+                  </Text>
+                  <Tag color="red" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                    {stats.highPriority}
+                  </Tag>
+                </div>
+
+                <div style={{
+                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                }}>
+                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
+                    Overdue
+                  </Text>
+                  <Tag color="volcano" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                    {stats.overdue}
+                  </Tag>
+                </div>
+
+                <div style={{
+                  background: darkMode ? 'rgba(254, 202, 87, 0.15)' : 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
+                }}>
+                  <Text style={{ color: darkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.95)', fontSize: 13 }}>
+                    Completion Rate
+                  </Text>
+                  <Tag color="success" style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 8 }}>
+                    {stats.completionRate}%
+                  </Tag>
+                </div>
+              </Space>
+            </Space>
           </Card>
         </Col>
       </Row>
